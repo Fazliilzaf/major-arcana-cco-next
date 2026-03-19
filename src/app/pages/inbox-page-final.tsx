@@ -30,11 +30,27 @@ export function InboxPageFinal() {
   const [expandedFilters, setExpandedFilters] = useState<string[]>([]);
   const [selectedMailboxes, setSelectedMailboxes] = useState<string[]>(mailboxes.map(m => m.id));
   const [showMailboxDropdown, setShowMailboxDropdown] = useState(false);
+  const [snoozedMessages, setSnoozedMessages] = useState<string[]>([]); // Track snoozed messages
   
   // Mobile/Tablet states
   const [mobileView, setMobileView] = useState<"worklist" | "conversation" | "customer">("conversation");
   const [showMobileWorklist, setShowMobileWorklist] = useState(false);
   const [showCustomerDrawer, setShowCustomerDrawer] = useState(false);
+
+  // Handler to add message to "Senare"
+  const handleSnoozeMessage = (messageId: string) => {
+    setSnoozedMessages((prev) => {
+      if (!prev.includes(messageId)) {
+        return [...prev, messageId];
+      }
+      return prev;
+    });
+  };
+
+  // Handler to remove message from "Senare"
+  const handleUnsnoozeMessage = (messageId: string) => {
+    setSnoozedMessages((prev) => prev.filter(id => id !== messageId));
+  };
 
   const handleToggleFilter = (filterId: string) => {
     setActiveFilters((prev) => {
@@ -218,6 +234,9 @@ export function InboxPageFinal() {
               activeFilters={activeFilters}
               showSprintBox={showSprintBox}
               selectedMailboxes={selectedMailboxes}
+              snoozedMessages={snoozedMessages}
+              onSnoozeMessage={handleSnoozeMessage}
+              onUnsnoozeMessage={handleUnsnoozeMessage}
             />
           </div>
         </>
@@ -256,6 +275,9 @@ export function InboxPageFinal() {
               activeFilters={activeFilters}
               showSprintBox={showSprintBox}
               selectedMailboxes={selectedMailboxes}
+              snoozedMessages={snoozedMessages}
+              onSnoozeMessage={handleSnoozeMessage}
+              onUnsnoozeMessage={handleUnsnoozeMessage}
             />
           </Panel>
 
@@ -263,7 +285,10 @@ export function InboxPageFinal() {
 
           {/* MIDDLE: Conversation - flex-1 */}
           <Panel defaultSize={50} minSize={30} maxSize={60}>
-            <ConversationFocusPanel />
+            <ConversationFocusPanel 
+              selectedMessage={selectedMessage}
+              onSnoozeMessage={handleSnoozeMessage}
+            />
           </Panel>
 
           <PanelResizeHandle className="w-1 bg-gray-200 dark:bg-gray-700 hover:bg-pink-400 dark:hover:bg-pink-600 transition-colors cursor-col-resize active:bg-pink-500 dark:active:bg-pink-500" />
@@ -277,7 +302,10 @@ export function InboxPageFinal() {
 
       {/* MOBILE/TABLET: Conversation Only (no worklist) */}
       <div className="flex-1 overflow-hidden lg:hidden">
-        <ConversationFocusPanel />
+        <ConversationFocusPanel 
+          selectedMessage={selectedMessage}
+          onSnoozeMessage={handleSnoozeMessage}
+        />
       </div>
     </div>
   );

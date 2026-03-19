@@ -1,4 +1,4 @@
-import { Zap, CheckSquare, ChevronDown, ChevronRight, Inbox, Timer, AlertCircle, Calendar, CalendarClock, AlertTriangle, UserX, Stethoscope, Shield } from "lucide-react";
+import { Zap, CheckSquare, ChevronDown, ChevronRight, Inbox, Timer, AlertCircle, Calendar, CalendarClock, AlertTriangle, UserX, Stethoscope, Shield, Clock } from "lucide-react";
 import { useState } from "react";
 import { MinimalMessageItem } from "./minimal-message-item";
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
@@ -12,6 +12,9 @@ interface SimplifiedWorklistPanelProps {
   activeFilters: string[];
   showSprintBox: boolean;
   selectedMailboxes: string[];
+  snoozedMessages?: string[]; // IDs of messages marked as "later"
+  onSnoozeMessage?: (messageId: string) => void;
+  onUnsnoozeMessage?: (messageId: string) => void;
 }
 
 // Category definitions
@@ -24,6 +27,7 @@ interface Category {
 
 const categories: Category[] = [
   { id: "all", label: "Alla trådar", icon: Inbox },
+  { id: "later", label: "Senare", icon: Clock, color: "blue" },
   { id: "sprint", label: "Sprint", icon: Zap, color: "green" },
   { id: "act-now", label: "Agera nu", icon: AlertCircle, color: "red" },
   { id: "bookable", label: "Bokningsåkara", icon: Calendar, color: "blue" },
@@ -120,6 +124,9 @@ export function SimplifiedWorklistPanel({
   activeFilters,
   showSprintBox,
   selectedMailboxes,
+  snoozedMessages,
+  onSnoozeMessage,
+  onUnsnoozeMessage,
 }: SimplifiedWorklistPanelProps) {
   const [listMode, setListMode] = useState("normal");
   const [expandedCategories, setExpandedCategories] = useState<string[]>(["all"]);
@@ -205,6 +212,14 @@ export function SimplifiedWorklistPanel({
     if (categoryId === "all") {
       return mailboxFilteredMessages;
     }
+    
+    // Special handling for "later" category - shows snoozed messages
+    if (categoryId === "later") {
+      return mailboxFilteredMessages.filter((msg) => 
+        snoozedMessages && snoozedMessages.includes(msg.id)
+      );
+    }
+    
     return mailboxFilteredMessages.filter((msg) => msg.tags.includes(categoryId));
   };
 

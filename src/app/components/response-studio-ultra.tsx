@@ -28,6 +28,8 @@ interface ResponseStudioUltraProps {
   isOpen: boolean;
   onClose: () => void;
   initialDraft?: string;
+  selectedMessage?: string;
+  onSnoozeMessage?: (messageId: string) => void;
 }
 
 // Vanliga emojis för snabb-insättning
@@ -36,7 +38,7 @@ const quickEmojis = [
   '📅', '⏰', '💉', '🌟', '🔥', '💝', '🌸', '☀️'
 ];
 
-export function ResponseStudioUltra({ isOpen, onClose, initialDraft = "" }: ResponseStudioUltraProps) {
+export function ResponseStudioUltra({ isOpen, onClose, initialDraft = "", selectedMessage = "1", onSnoozeMessage }: ResponseStudioUltraProps) {
   const [draftText, setDraftText] = useState(initialDraft || `Hej Johan,\n\nVad kul att fredag kl 09:00 passar – det ser jag fram emot!\n\nDin tid är nu bokad.\n\nDu får en påminnelse dagen innan på sms.\n\nHör av dig om du har några frågor.`);
 
   const [showSnoozeDialog, setShowSnoozeDialog] = useState(false);
@@ -49,10 +51,6 @@ export function ResponseStudioUltra({ isOpen, onClose, initialDraft = "" }: Resp
   const [currentSignature, setCurrentSignature] = useState<Signature>(defaultSignatures.fazli);
   const [selectedSignatureId, setSelectedSignatureId] = useState<string>("fazli");
   const [isSending, setIsSending] = useState(false);
-  
-  // AI SETTINGS - NEW!
-  const [aiMode, setAiMode] = useState<'conversation-only' | 'full-context'>('conversation-only');
-  const [aiTone, setAiTone] = useState<'match-company' | 'professional' | 'friendly'>('match-company');
   
   const handleError = useApiErrorHandler();
   
@@ -124,7 +122,11 @@ export function ResponseStudioUltra({ isOpen, onClose, initialDraft = "" }: Resp
   };
 
   const handleSnooze = (time: string) => {
-    toast.success(`⏰ Svara senare (${time}) · Finns i 'Senare'-fliken`);
+    // Add message to "Senare" category
+    if (onSnoozeMessage && selectedMessage) {
+      onSnoozeMessage(selectedMessage);
+    }
+    toast.success(`⏰ Svara senare (${time}) · Finns i 'Senare'-kategorin i Working list`);
     setShowSnoozeDialog(false);
     onClose();
   };
@@ -511,100 +513,6 @@ Du får påminnelse på sms dagen innan.`);
                     </button>
                   </div>
                 </div>
-                
-                {/* AI SETTINGS - NEW SECTION */}
-                <div className="rounded-lg bg-gradient-to-br from-indigo-50 to-blue-50 border-2 border-indigo-300 p-3">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Bot className="h-4 w-4 text-indigo-600" />
-                    <h5 className="text-xs font-bold text-gray-900">AI-inställningar</h5>
-                  </div>
-                  
-                  {/* AI Mode */}
-                  <div className="mb-3">
-                    <p className="text-[10px] font-bold text-gray-700 mb-1.5 uppercase tracking-wide">Datakällor:</p>
-                    <div className="space-y-1.5">
-                      <label className="flex items-start gap-2 cursor-pointer group">
-                        <input
-                          type="radio"
-                          checked={aiMode === 'conversation-only'}
-                          onChange={() => setAiMode('conversation-only')}
-                          className="mt-0.5 h-3.5 w-3.5 text-indigo-600 focus:ring-indigo-500"
-                        />
-                        <div className="flex-1">
-                          <p className="text-[11px] font-semibold text-gray-900 group-hover:text-indigo-700">Endast konversation</p>
-                          <p className="text-[9px] text-gray-600 leading-relaxed">AI använder bara mejlkonversationen. Tar inte info från noter, önskemål eller historik.</p>
-                        </div>
-                      </label>
-                      <label className="flex items-start gap-2 cursor-pointer group">
-                        <input
-                          type="radio"
-                          checked={aiMode === 'full-context'}
-                          onChange={() => setAiMode('full-context')}
-                          className="mt-0.5 h-3.5 w-3.5 text-indigo-600 focus:ring-indigo-500"
-                        />
-                        <div className="flex-1">
-                          <p className="text-[11px] font-semibold text-gray-900 group-hover:text-indigo-700">Full kontext</p>
-                          <p className="text-[9px] text-gray-600 leading-relaxed">AI använder allt: önskemål, medicinska noter, behandlingshistorik och preferenser.</p>
-                        </div>
-                      </label>
-                    </div>
-                  </div>
-
-                  {/* AI Tone */}
-                  <div className="pt-3 border-t border-indigo-200">
-                    <p className="text-[10px] font-bold text-gray-700 mb-1.5 uppercase tracking-wide">Tonalitet:</p>
-                    <div className="space-y-1.5">
-                      <label className="flex items-start gap-2 cursor-pointer group">
-                        <input
-                          type="radio"
-                          checked={aiTone === 'match-company'}
-                          onChange={() => setAiTone('match-company')}
-                          className="mt-0.5 h-3.5 w-3.5 text-indigo-600 focus:ring-indigo-500"
-                        />
-                        <div className="flex-1">
-                          <p className="text-[11px] font-semibold text-gray-900 group-hover:text-indigo-700">Matcha företaget</p>
-                          <p className="text-[9px] text-gray-600 leading-relaxed">AI matchar företagets vanliga svarsstil. Ingen egen kreativitet.</p>
-                        </div>
-                      </label>
-                      <label className="flex items-start gap-2 cursor-pointer group">
-                        <input
-                          type="radio"
-                          checked={aiTone === 'professional'}
-                          onChange={() => setAiTone('professional')}
-                          className="mt-0.5 h-3.5 w-3.5 text-indigo-600 focus:ring-indigo-500"
-                        />
-                        <div className="flex-1">
-                          <p className="text-[11px] font-semibold text-gray-900 group-hover:text-indigo-700">Professionell</p>
-                          <p className="text-[9px] text-gray-600 leading-relaxed">Formell och saklig ton.</p>
-                        </div>
-                      </label>
-                      <label className="flex items-start gap-2 cursor-pointer group">
-                        <input
-                          type="radio"
-                          checked={aiTone === 'friendly'}
-                          onChange={() => setAiTone('friendly')}
-                          className="mt-0.5 h-3.5 w-3.5 text-indigo-600 focus:ring-indigo-500"
-                        />
-                        <div className="flex-1">
-                          <p className="text-[11px] font-semibold text-gray-900 group-hover:text-indigo-700">Vänlig</p>
-                          <p className="text-[9px] text-gray-600 leading-relaxed">Varm och personlig ton.</p>
-                        </div>
-                      </label>
-                    </div>
-                  </div>
-                  
-                  {/* Warning if Full Context */}
-                  {aiMode === 'full-context' && (
-                    <div className="mt-3 rounded-lg bg-amber-50 border border-amber-300 p-2">
-                      <div className="flex items-start gap-1.5">
-                        <AlertCircle className="h-3 w-3 text-amber-600 flex-shrink-0 mt-0.5" />
-                        <p className="text-[9px] text-amber-800 leading-relaxed">
-                          <strong>OBS:</strong> AI kan nu ta beslut baserat på noter och historik. Granska alltid svaret!
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </div>
               </div>
             </div>
           )}
@@ -665,103 +573,6 @@ Du får påminnelse på sms dagen innan.`);
                     className="text-left rounded-lg border border-gray-200 p-2 hover:border-pink-300 hover:bg-pink-50 transition-colors"
                   >
                     <p className="text-[11px] font-semibold text-gray-900">Be om info</p>
-                  </button>
-                </div>
-              </div>
-
-              {/* RESPONSPÅR - NY! */}
-              <div className="rounded-lg border-2 border-pink-200 bg-gradient-to-br from-pink-50 to-rose-50 p-3">
-                <h5 className="text-xs font-bold text-gray-900 mb-2 flex items-center gap-2">
-                  <Target className="h-3.5 w-3.5 text-pink-600" />
-                  RESPONSPÅR
-                </h5>
-                <div className="flex flex-wrap gap-1.5">
-                  {[
-                    { label: "Bokningsförslag", active: true },
-                    { label: "Uppföljning", active: false },
-                    { label: "Mellanbesked", active: false },
-                    { label: "Medicinsk vänt", active: false },
-                    { label: "Pris / trygghet", active: false },
-                    { label: "Adminsvar", active: false },
-                  ].map((spar) => (
-                    <button
-                      key={spar.label}
-                      onClick={() => {
-                        toast.success(`📋 Responspår: ${spar.label}`);
-                      }}
-                      className={`px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-all ${
-                        spar.active
-                          ? "bg-gradient-to-r from-pink-600 to-rose-600 text-white shadow-sm"
-                          : "bg-white border border-pink-200 text-gray-700 hover:bg-pink-50 hover:border-pink-300"
-                      }`}
-                    >
-                      {spar.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* TONFILTER - NY! */}
-              <div className="rounded-lg border-2 border-blue-200 bg-gradient-to-br from-blue-50 to-indigo-50 p-3">
-                <h5 className="text-xs font-bold text-gray-900 mb-2 flex items-center gap-2">
-                  <Wand2 className="h-3.5 w-3.5 text-blue-600" />
-                  TONFILTER
-                </h5>
-                <div className="flex flex-wrap gap-1.5">
-                  {[
-                    { label: "Professionell", checked: true },
-                    { label: "Varm", checked: true },
-                    { label: "Lösningsfokuserad", checked: true },
-                    { label: "Beslutsstödjande", checked: true },
-                  ].map((ton) => (
-                    <button
-                      key={ton.label}
-                      onClick={() => {
-                        toast.success(`🎨 Tonfilter: ${ton.label}`);
-                      }}
-                      className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-all ${
-                        ton.checked
-                          ? "bg-blue-600 text-white shadow-sm"
-                          : "bg-white border border-blue-200 text-gray-700 hover:bg-blue-50 hover:border-blue-300"
-                      }`}
-                    >
-                      {ton.checked && <CheckCircle className="h-3 w-3" />}
-                      {ton.label}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* FINUSTERA - NY! */}
-              <div className="rounded-lg border-2 border-purple-200 bg-gradient-to-br from-purple-50 to-pink-50 p-3">
-                <h5 className="text-xs font-bold text-gray-900 mb-2 flex items-center gap-2">
-                  <Scissors className="h-3.5 w-3.5 text-purple-600" />
-                  FINUSTERA
-                </h5>
-                <div className="flex flex-wrap gap-1.5">
-                  <button
-                    onClick={handleShorten}
-                    className="px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-white border border-purple-200 text-gray-700 hover:bg-purple-50 hover:border-purple-300 transition-all"
-                  >
-                    Kortare
-                  </button>
-                  <button
-                    onClick={handleMakeWarmer}
-                    className="px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-white border border-purple-200 text-gray-700 hover:bg-purple-50 hover:border-purple-300 transition-all"
-                  >
-                    Varmare
-                  </button>
-                  <button
-                    onClick={handleMakeProfessional}
-                    className="px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-white border border-purple-200 text-gray-700 hover:bg-purple-50 hover:border-purple-300 transition-all"
-                  >
-                    Proffigare
-                  </button>
-                  <button
-                    onClick={handleImproveGrammar}
-                    className="px-2.5 py-1 rounded-lg text-[10px] font-semibold bg-white border border-purple-200 text-gray-700 hover:bg-purple-50 hover:border-purple-300 transition-all"
-                  >
-                    Skarpare
                   </button>
                 </div>
               </div>
@@ -864,13 +675,13 @@ Du får påminnelse på sms dagen innan.`);
                 </div>
               )}
 
-              {/* SIGNATUR VÄLJARE - NY! */}
+              {/* SIGNATUR VÄLJARE */}
               <div className="rounded-lg border-2 border-gray-200 bg-white p-3">
                 <h5 className="text-xs font-bold text-gray-900 mb-2 flex items-center gap-2">
                   <Edit3 className="h-3.5 w-3.5 text-gray-600" />
                   SIGNATUR
                 </h5>
-                <div className="flex flex-wrap gap-1.5">
+                <div className="flex gap-1.5 overflow-x-auto scrollbar-hide">
                   {[
                     { label: "Sara", id: "sara", active: selectedSignatureId === "sara" },
                     { label: "Egzona", id: "egzona", active: selectedSignatureId === "egzona" },
@@ -888,7 +699,7 @@ Du får påminnelse på sms dagen innan.`);
                           toast.success(`✍️ Signatur: ${sig.label}`);
                         }
                       }}
-                      className={`px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-all ${
+                      className={`px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-all whitespace-nowrap ${
                         sig.active
                           ? "bg-gray-900 text-white shadow-sm"
                           : "bg-white border border-gray-200 text-gray-700 hover:bg-gray-50 hover:border-gray-300"
@@ -900,43 +711,116 @@ Du får påminnelse på sms dagen innan.`);
                 </div>
               </div>
 
-              {/* Signature */}
-              <details className="group">
-                <summary className="cursor-pointer list-none">
-                  <div className="flex items-center justify-between rounded-lg border border-gray-200 bg-gray-50 px-3 py-2.5 hover:bg-gray-100 transition-colors">
-                    <div className="flex items-center gap-2">
-                      <Edit3 className="h-3.5 w-3.5 text-gray-500" />
-                      <span className="text-xs font-medium text-gray-700">E-postsignatur</span>
-                      <span className="text-[10px] text-gray-500">({currentSignature.name})</span>
+              {/* Extra spacing för att ge plats för sticky-sektionen */}
+              <div className="h-48"></div>
+            </div>
+
+            {/* AI KONTROLLER - STICKY LÄNGST NER */}
+            <div className="sticky bottom-0 bg-white border-t-2 border-pink-200 shadow-lg">
+              <div className="p-3 space-y-2 max-h-[40vh] overflow-y-auto">
+                {/* RESPONSPÅR */}
+                <div className="rounded-lg bg-pink-50 dark:bg-pink-950/20 border border-pink-200 dark:border-pink-700 p-2.5">
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="p-0.5 rounded bg-pink-500">
+                      <svg className="h-3 w-3 text-white" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                        <circle cx="12" cy="12" r="10"/>
+                        <circle cx="12" cy="12" r="3"/>
+                      </svg>
                     </div>
-                    <button
-                      onClick={(e) => {
-                        e.preventDefault();
-                        setShowSignatureEditor(true);
-                      }}
-                      className="rounded bg-blue-50 border border-blue-200 px-2.5 py-1 text-[10px] font-medium text-blue-700 hover:bg-blue-100 transition-colors"
-                    >
-                      Redigera
-                    </button>
+                    <h5 className="text-[10px] font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide">RESPONSPÅR</h5>
                   </div>
-                </summary>
-                <div className="mt-2 rounded-lg border border-gray-200 bg-gray-50 p-3 text-[11px]" style={{ lineHeight: '1.6' }}>
-                  <p className="mb-2 text-gray-700">{currentSignature.greeting}</p>
-                  <div className="flex gap-2">
-                    <AnimatedSignatureLogo 
-                      src={currentSignature.logo} 
-                      alt="Logo" 
-                      className="h-16 w-16 flex-shrink-0"
-                    />
-                    <div className="w-[1.5px] bg-gray-300 rounded-full"></div>
-                    <div className="flex-1 text-[10px]">
-                      <p className="font-semibold text-gray-400">{currentSignature.name}</p>
-                      <p className="font-bold text-gray-900 text-[11px]">{currentSignature.title}</p>
-                      <p className="text-gray-800">{currentSignature.phone}</p>
-                    </div>
+                  <div className="flex gap-1.5 overflow-x-auto scrollbar-hide">
+                    {[
+                      { label: "Bokningsförslag", active: true },
+                      { label: "Uppföljning", active: false },
+                      { label: "Mellanbesked", active: false },
+                      { label: "Medicinsk vänt", active: false },
+                      { label: "Pris / trygghet", active: false },
+                      { label: "Adminsvar", active: false },
+                    ].map((track) => (
+                      <button
+                        key={track.label}
+                        onClick={() => toast.success(`Responspår: ${track.label}`)}
+                        className={`px-2.5 py-1 rounded-full text-[9px] font-semibold transition-all whitespace-nowrap ${
+                          track.active
+                            ? "bg-pink-500 text-white shadow-sm"
+                            : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600"
+                        }`}
+                      >
+                        {track.label}
+                      </button>
+                    ))}
                   </div>
                 </div>
-              </details>
+
+                {/* TONFILTER */}
+                <div className="rounded-lg bg-blue-50 dark:bg-blue-950/20 border border-blue-200 dark:border-blue-700 p-2.5">
+                  <div className="flex items-center gap-2 mb-2">
+                    <svg className="h-3 w-3 text-blue-600 dark:text-blue-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/>
+                    </svg>
+                    <h5 className="text-[10px] font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide">TONFILTER</h5>
+                  </div>
+                  <div className="flex gap-1.5 overflow-x-auto scrollbar-hide">
+                    {[
+                      { label: "Professionell", active: true },
+                      { label: "Varm", active: true },
+                      { label: "Lösningsfokuserad", active: true },
+                      { label: "Beslutsstödjande", active: true },
+                    ].map((tone) => (
+                      <button
+                        key={tone.label}
+                        onClick={() => toast.success(`Tonfilter: ${tone.label}`)}
+                        className={`px-2.5 py-1 rounded-full text-[9px] font-semibold transition-all flex items-center gap-1 whitespace-nowrap ${
+                          tone.active
+                            ? "bg-blue-500 text-white shadow-sm"
+                            : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600"
+                        }`}
+                      >
+                        {tone.active && (
+                          <svg className="h-2.5 w-2.5" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="3">
+                            <polyline points="20 6 9 17 4 12"/>
+                          </svg>
+                        )}
+                        {tone.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* FINUSTERA */}
+                <div className="rounded-lg bg-purple-50 dark:bg-purple-950/20 border border-purple-200 dark:border-purple-700 p-2.5">
+                  <div className="flex items-center gap-2 mb-2">
+                    <svg className="h-3 w-3 text-purple-600 dark:text-purple-400" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+                      <path d="M12 19l7-7 3 3-7 7-3-3z"/>
+                      <path d="M18 13l-1.5-7.5L2 2l3.5 14.5L13 18l5-5z"/>
+                      <path d="M2 2l7.586 7.586"/>
+                      <circle cx="11" cy="11" r="2"/>
+                    </svg>
+                    <h5 className="text-[10px] font-bold text-gray-900 dark:text-gray-100 uppercase tracking-wide">FINUSTERA</h5>
+                  </div>
+                  <div className="flex gap-1.5 overflow-x-auto scrollbar-hide">
+                    {[
+                      { label: "Kortare", active: false },
+                      { label: "Varmare", active: false },
+                      { label: "Proffigare", active: false },
+                      { label: "Skarpare", active: false },
+                    ].map((tweak) => (
+                      <button
+                        key={tweak.label}
+                        onClick={() => toast.success(`Finustera: ${tweak.label}`)}
+                        className={`px-2.5 py-1 rounded-full text-[9px] font-semibold transition-all whitespace-nowrap ${
+                          tweak.active
+                            ? "bg-purple-500 text-white shadow-sm"
+                            : "bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 border border-gray-200 dark:border-gray-600"
+                        }`}
+                      >
+                        {tweak.label}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
             </div>
 
             {/* Footer Actions */}

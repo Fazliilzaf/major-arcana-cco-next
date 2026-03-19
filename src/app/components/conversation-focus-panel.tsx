@@ -4,7 +4,12 @@ import { ResponseStudioUltra } from "./response-studio-ultra";
 import { toast } from "sonner";
 import { CompactBookingCard, generateMockBookingContext } from "./compact-booking-card";
 
-export function ConversationFocusPanel() {
+interface ConversationFocusPanelProps {
+  selectedMessage?: string | null;
+  onSnoozeMessage?: (messageId: string) => void;
+}
+
+export function ConversationFocusPanel({ selectedMessage, onSnoozeMessage }: ConversationFocusPanelProps = {}) {
   const [activeTab, setActiveTab] = useState<"konversation" | "kundhistorik" | "historik">("konversation");
   const [showResponseStudio, setShowResponseStudio] = useState(false);
   const [draftMessage, setDraftMessage] = useState("");
@@ -621,6 +626,8 @@ export function ConversationFocusPanel() {
       <ResponseStudioUltra
         isOpen={showResponseStudio}
         onClose={() => setShowResponseStudio(false)}
+        selectedMessage={selectedMessage || "1"}
+        onSnoozeMessage={onSnoozeMessage}
       />
     </div>
   );
