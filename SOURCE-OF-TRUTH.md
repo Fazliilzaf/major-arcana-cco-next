@@ -49,10 +49,37 @@ Dessa filer är gamla versioner och ska INTE användas:
 
 ## 🧩 **CORE KOMPONENTER**
 
-### **Inbox Components**
-- `/src/app/components/inbox/conversation-list-compact.tsx` - ✅ Konversationslista
-- `/src/app/components/inbox/conversation-detail-compact.tsx` - ✅ Konversationsdetaljer
-- `/src/app/components/inbox/inbox-categories-dragdrop.tsx` - ✅ Drag & drop kategorier
+### **Inbox & Conversation**
+- `/src/app/components/inbox-with-sidebar.tsx` - ✅ Inbox layout (äldre version)
+- `/src/app/components/conversation-detail.tsx` - ✅ Konversationsdetaljer
+- `/src/app/components/enhanced-conversation-detail.tsx` - ✅ Enhanced detaljer
+- `/src/app/components/reversed-conversation-detail.tsx` - ✅ Reversed flow
+- `/src/app/components/reversed-conversation-detail-compact.tsx` - ✅ Reversed kompakt
+- `/src/app/components/conversation-focus-panel.tsx` - ✅ Fokuspanel
+- `/src/app/components/simplified-worklist-panel.tsx` - ✅ Arbetslista (används i inbox-page-final)
+- `/src/app/components/conversation-context-card.tsx` - ✅ Kontext-kort
+- `/src/app/components/message-list.tsx` - ✅ Meddelandelista
+- `/src/app/components/progressive-message-list.tsx` - ✅ Progressiv lista
+- `/src/app/components/progressive-message-item.tsx` - ✅ Progressiva items
+- `/src/app/components/minimal-message-item.tsx` - ✅ Minimala items
+
+### **Customer Intelligence**
+- `/src/app/components/customer-intelligence-panel.tsx` - ✅ AKTIV kundpanel
+- `/src/app/components/customer-intelligence-sidebar.tsx` - ✅ Sidebar variant
+- `/src/app/components/customer-intelligence-sidebar-optimized.tsx` - ✅ Optimerad
+- `/src/app/components/customer-identity-page.tsx` - ✅ Kundidentitet (route: /customers)
+- `/src/app/components/customer-identity-manager.tsx` - ✅ Identity manager
+- `/src/app/components/unified-customer-profile.tsx` - ✅ Unified profil
+- `/src/app/components/customer-panel-tabs.tsx` - ✅ Panel tabs
+- `/src/app/components/customer-journey-timeline.tsx` - ✅ KOMPAKT + SVENSKA
+
+### **Response Studio**
+- `/src/app/components/response-studio.tsx` - ✅ Huvudkomponent
+- `/src/app/components/response-studio-ultra.tsx` - ✅ Ultra-kompakt
+- `/src/app/components/enhanced-response-studio.tsx` - ✅ Enhanced version
+- `/src/app/components/response-studio-modal.tsx` - ✅ Modal version
+- `/src/app/components/response-studio-drawer.tsx` - ✅ Drawer version
+- `/src/app/components/svarsstudio-panel.tsx` - ✅ Panel version
 
 ### **Workflow Components**
 - `/src/app/components/workflow/workflow-canvas.tsx` - ✅ Arbetsflödets canvas
@@ -61,6 +88,10 @@ Dessa filer är gamla versioner och ska INTE användas:
 - `/src/app/components/workflow/workflow-testing.tsx` - ✅ ULTRA-KOMPAKT
 - `/src/app/components/workflow/workflow-versions.tsx` - ✅ ULTRA-KOMPAKT
 - `/src/app/components/workflow/workflow-autopilot.tsx` - ✅ ULTRA-KOMPAKT
+- `/src/app/components/workflow/workflow-node.tsx` - ✅ Node-komponent
+- `/src/app/components/workflow/workflow-sidebar.tsx` - ✅ Sidebar
+- `/src/app/components/workflow/workflow-collaboration.tsx` - ✅ Samarbete
+- `/src/app/components/workflow/ai-suggestions.tsx` - ✅ AI-förslag
 
 ### **Showcase/Power Features**
 - `/src/app/components/command-palette.tsx` - ✅ KOMPAKT + SVENSKA
@@ -70,7 +101,6 @@ Dessa filer är gamla versioner och ska INTE användas:
 - `/src/app/components/saved-views-panel.tsx` - ✅ Sparade vyer
 - `/src/app/components/ai-copilot.tsx` - ✅ AI-assistent
 - `/src/app/components/macro-builder.tsx` - ✅ Makrobyggare
-- `/src/app/components/customer-journey-timeline.tsx` - ✅ Kundresa
 
 ---
 
@@ -178,3 +208,25 @@ Om något är oklart, följ denna prioritetsordning:
 ---
 
 **🎯 Kom ihåg:** inbox-page-final.tsx är den enda riktiga inbox-sidan!
+
+---
+
+## 🔍 **VERIFIERING**
+
+För att verifiera att en fil existerar, använd:
+
+```bash
+# Kontrollera en specifik fil
+ls src/app/pages/inbox-page-final.tsx
+
+# Lista alla sidor
+ls src/app/pages/
+
+# Lista alla komponenter
+ls src/app/components/
+
+# Lista workflow-komponenter
+ls src/app/components/workflow/
+```
+
+**OBS:** Detta dokument uppdaterades senast 2026-03-19. Om du hittar felaktigheter, uppdatera dokumentet!
