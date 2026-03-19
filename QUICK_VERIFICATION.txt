@@ -1,0 +1,287 @@
+═══════════════════════════════════════════════════════════════
+🔥 CCO APPLIKATION - SNABB VERIFIERINGSCHECKLISTA
+═══════════════════════════════════════════════════════════════
+
+INSTRUKTIONER TILL CODEX:
+Gå igenom VARJE punkt och BEVISA med filnamn + radnummer att funktionen finns.
+Svara ENDAST med: ✅ VERIFIERAD (fil, rad), ⚠️ DELVIS (vad saknas), ❌ SAKNAS
+
+═══════════════════════════════════════════════════════════════
+📋 CHECKLISTA
+═══════════════════════════════════════════════════════════════
+
+🎨 1. DESIGN & LOGOTYPER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+□ CCO-logotyp i header (EXAKT h-[53px], INTE h-9 eller h-10)
+   → Fil: /src/app/components/header.tsx
+   → BEVISA: import-rad + img className-rad
+
+□ Animerad logo-komponent (/src/app/components/animated-signature-logo.tsx)
+   → FINNS filen?
+   → Är animation en LOOP (infinite)?
+   → BEVISA: animation-definition rad
+
+□ Email-signatur logo upload
+   → Fil: /src/app/components/signature-editor-modal.tsx
+   → FILE INPUT finns? Accepterar .png/.jpg/.svg?
+   → handleLogoUpload funktion finns?
+   → BEVISA: radnummer för file input + upload-funktion
+
+□ Premium rosa färgschema
+   → Sök efter "pink-500", "pink-600", "rose-500" i projektet
+   → BEVISA: 3 exempel där rosa används (fil + rad)
+
+
+🚀 2. CCO CORE-FUNKTIONER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+□ Sprint Mode toggle
+   → Fil: /src/app/components/header.tsx
+   → sprintMode state finns? Rad?
+   → toggleSprintMode funktion? Rad?
+   → Sprint-knapp visar räknare (max 3)? Rad?
+   → Färg när aktiv: GRÖN gradient (emerald/teal)? Rad?
+
+□ Progressive Disclosure (minimize/expand)
+   → Fil: /src/app/components/progressive-message-list.tsx
+   → minimizedMessages state? Rad?
+   → toggle-funktion? Rad?
+   → Smooth animation (transition-all)?
+
+□ Density Modes (4 modes: compact, normal, comfortable, overview)
+   → Fil: /src/app/components/combined-density-control.tsx ELLER progressive-message-list
+   → type DensityMode = "compact" | "normal" | "comfortable" | "overview"? Rad?
+   → Selector-komponent finns?
+   → Ändrar padding beroende på mode?
+
+□ SLA-hantering
+   → Fil: /src/app/components/progressive-message-list.tsx
+   → slaStatus: "safe" | "warning" | "breach"? Rad?
+   → slaMinutesLeft visas i UI? Rad?
+   → Färgmapping: safe=grön, warning=gul, breach=röd?
+
+□ AI Recommended Actions
+   → recommendedAction field finns? Rad?
+   → Visas i UI med klickbar knapp? Rad?
+   → suggestedReply finns? Rad?
+
+□ Customer Engagement Indicators
+   → warmth: "cold" | "warm" | "hot"? Rad?
+   → lifecycle eller journeyStage? Rad?
+   → Flame emoji 🔥 för "hot"?
+   → Visas i UI?
+
+□ VIP & Revenue Tracking
+   → isVIP boolean? Rad?
+   → VIP-badge med 👑 eller ⭐? Rad?
+   → revenuePotential: "low" | "medium" | "high" | "premium"? Rad?
+   → lifetimeValue (number)? Rad?
+
+□ Stagnation Detection
+   → isStagnant boolean? Rad?
+   → needsFollowup boolean? Rad?
+   → Visuell varning för stagnerande konversationer?
+
+□ Safe Delete
+   → Fil: /src/app/components/safe-delete-toast.tsx
+   → showSafeDeleteToast funktion finns? Rad?
+   → Undo-knapp i toast?
+   → Restore Ignored Modal finns? Fil: restore-ignored-modal.tsx
+
+
+💬 3. KONVERSATIONSHANTERING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+□ Inbox med meddelandelista
+   → Fil: /src/app/components/progressive-message-list.tsx
+   → Multi-select med checkboxes? multiSelectMode state? Rad?
+   → Bulk operations toolbar? Fil: multi-select-toolbar.tsx finns?
+
+□ Konversationsvy (mitten-kolumn)
+   → Fil: /src/app/components/enhanced-conversation-detail.tsx
+   → Tabs: Konversation, Kundhistorik, Historik?
+   → Quick Response bar?
+
+□ Response Studio Modal
+   → Fil: /src/app/components/response-studio-modal.tsx
+   → Fullscreen modal (fixed inset-0)? Rad?
+   → AI filter toggles (kort, varm, proffsig)? Rad?
+   → Word count calculation? Rad?
+   → Policy violation check ("gratis", "garanti")? Rad?
+   → Signature selector? Rad?
+
+
+🧠 4. CUSTOMER INTELLIGENCE SIDEBAR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+□ Fyra tabs (Översikt, AI, Medical, Team)
+   → Fil: /src/app/components/customer-intelligence-sidebar-optimized.tsx
+   → type TabType = 'oversikt' | 'ai' | 'medical' | 'team'? Rad?
+
+□ Medical Tab
+   → treatmentHistory array visas? Rad?
+   → medicalFlags array visas? Rad?
+   → consentStatus (gdpr, photos, marketing)? Rad?
+
+□ Team Tab
+   → assignedTo field visas? Rad?
+   → internalNotes array? Rad?
+   → Add note-funktion med Ctrl+N shortcut? Rad?
+
+□ Collapsible Sections
+   → collapsedSections state (Set<string>)? Rad?
+   → toggleSection funktion? Rad?
+   → ChevronDown/Up ikoner?
+
+
+✉️ 5. EMAIL-SIGNATUR
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+□ Signature Editor Modal
+   → Fil: /src/app/components/signature-editor-modal.tsx
+   → Signature interface med minst 10 fält? Rad?
+   → defaultSignatures export? Rad?
+   → Inkluderar: Fazli, Sara, Egzona?
+
+□ Logo Upload
+   → handleLogoUpload funktion? Rad?
+   → Använder FileReader för Base64? Rad?
+   → File input accepterar .png/.jpg/.svg? Rad?
+
+□ Animerad Logo i Signatur
+   → <AnimatedSignatureLogo /> används? Rad?
+   → ELLER <img src={signature.logo} />?
+
+
+🎛️ 6. HEADER & NAVIGATION
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+□ Header Components
+   → Fil: /src/app/components/header.tsx
+   → Search bar med input? Rad?
+   → Language toggle (SV/EN) med Globe-ikon? Rad?
+   → Notifications bell med badge? Rad?
+   → Profile avatar (circular, unsplash)? Rad?
+
+□ Navigation Tabs (5 tabs)
+   → Fil: /src/app/components/navigation-tabs.tsx
+   → Inkorg, Obesvarade, Snoozed, Utkast, Arkiv? Rad?
+   → Inkorg: rosa gradient (pink-500 to rose-500)? Rad?
+   → Obesvarade: amber gradient? Rad?
+   → Active state med useLocation? Rad?
+
+
+📱 7. RESIZABLE LAYOUT
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+□ Resizable Component
+   → Fil: /src/app/components/resizable-layout.tsx
+   → Tre kolumner (left, center, right)? Rad?
+   → re-resizable library (INTE react-resizable)? Rad?
+
+
+🎓 8. ONBOARDING & TUTORIAL
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+□ Onboarding Tutorial (5 steps)
+   → Fil: /src/app/components/onboarding-tutorial.tsx
+   → 5 steps: Välkommen, Sprint, Progressive, Density, AI? Rad?
+   → localStorage sparar "cco-onboarding-completed"? Rad?
+   → Nästa/Föregående/Hoppa över-knappar? Rad?
+
+
+📊 9. STATS DASHBOARD
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+□ Dashboard Modal
+   → Fil: /src/app/components/stats-dashboard-modal.tsx
+   → Modal med metrics (Total, Avg response, SLA compliance)? Rad?
+
+
+🌐 10. INTERNATIONALISERING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+□ Language Context
+   → Fil: /src/app/context/language-context.tsx
+   → type Language = "sv" | "en"? Rad?
+   → translations object med både SV och EN? Rad?
+   → t() funktion används i komponenter? Rad?
+
+
+🔧 11. ROUTING
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+□ Router Configuration
+   → Fil: /src/app/routes.tsx
+   → createBrowserRouter med 5 routes? Rad?
+   → /, /unanswered, /snoozed, /drafts, /archive?
+
+□ Page Components
+   → /src/app/pages/inbox-page.tsx finns?
+   → /src/app/pages/unanswered-page.tsx finns?
+   → /src/app/pages/snoozed-page.tsx finns?
+   → /src/app/pages/drafts-page.tsx finns?
+   → /src/app/pages/archive-page.tsx finns?
+
+□ Main Layout
+   → Fil: /src/app/layouts/main-layout.tsx
+   → <Outlet /> från react-router? Rad?
+   → <Header /> och <NavigationTabs /> inkluderade? Rad?
+
+
+🚨 12. KRITISKA FUNKTIONER
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+□ Kan användare öppna inbox och se meddelanden?
+   → InboxPage renderar ProgressiveMessageList? Rad?
+
+□ Kan användare klicka på meddelande och se konversation?
+   → onSelectMessage callback finns? Rad?
+
+□ Kan användare skriva och skicka snabbt svar?
+   → Quick Response bar med handleSendQuick? Rad?
+
+□ Kan användare öppna Response Studio?
+   → showResponseStudio state och modal? Rad?
+
+□ Kan användare ändra email-signatur och ladda upp logo?
+   → SignatureEditor med handleLogoUpload? Rad?
+
+□ Kan användare aktivera Sprint Mode?
+   → toggleSprintMode funktion och visuell feedback? Rad?
+
+□ Kan användare multi-select och bulk archive?
+   → multiSelectMode och MultiSelectToolbar? Rad?
+
+□ Ser användare Customer Intelligence för vald kund?
+   → CustomerIntelligenceSidebar renderas med message prop? Rad?
+
+□ Kan användare byta språk SV/EN?
+   → handleLanguageChange och LanguageContext? Rad?
+
+□ Ser användare onboarding vid första besök?
+   → OnboardingTutorial visas baserat på localStorage? Rad?
+
+
+═══════════════════════════════════════════════════════════════
+📊 SLUTLIG SAMMANFATTNING
+═══════════════════════════════════════════════════════════════
+
+✅ VERIFIERAT: ___ / 60
+⚠️ DELVIS: ___ / 60
+❌ SAKNAS: ___ / 60
+
+KRITISKA BRISTER:
+1. ___
+2. ___
+3. ___
+
+ÖVERGRIPANDE BEDÖMNING:
+[ ] Produktionsklar
+[ ] Behöver mindre fixes
+[ ] Behöver större ändringar
+[ ] Saknar kritiska funktioner
+
+═══════════════════════════════════════════════════════════════
+CODEX SIGNATUR & ÄRLIGHETSFÖRSÄKRAN
+═══════════════════════════════════════════════════════════════
+
+Jag har FAKTISKT öppnat filerna och läst koden.
+Jag har INTE gissat.
+Alla radnummer är EXAKTA.
+
+Datum: ___________
+Granskad av: Codex
+Tid spenderad: ___ minuter
+Antal filer öppnade: ___
+
+═══════════════════════════════════════════════════════════════

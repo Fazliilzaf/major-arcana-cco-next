@@ -1,0 +1,158 @@
+INSTRUKTIONER FÖR CODEX: INBOX MAILBOX-VÄLJARE OCH HEADER-DESIGN
+================================================================
+
+BAKGRUND
+--------
+Detta är en bokningshanteringsapplikation för HairTP Clinic med premium design i rosa nyanser och mjuka grå toner. Applikationen är ett komplett CRM/bokningssystem med inbox för meddelanden, detaljerad konversationsvy och Svarstudio. Designen följer industry standards som Intercom, Front och HubSpot med en tydlig tre-kolumns layout.
+
+
+VAD VI HADE INNAN
+------------------
+Ursprungliga tillståndet (från Codex första version):
+- En stor mailbox-väljare i headern som visade "Hair TP Clinic - All Mailboxes"
+- Lång och bred dropdown-meny
+- Simpla checkboxar utan färg
+- Email-adresser visade hela adressen (t.ex. "egzona@hairtpclinic.com")
+- Ingen visuell feedback på antal valda mailboxar
+- Ingen "Ägarvy"-funktionalitet
+- Bred och otymplig design
+
+
+VAD VI HAR NU (SLUTMÅLET)
+--------------------------
+
+1. KOMPAKT MAILBOX-VÄLJARE
+   - Svart bubbla (rounded-full) med vit text
+   - Visar dynamisk text baserat på urval:
+     * "Hair TP Clinic - Alla mailboxar" (när alla 7 är valda)
+     * "Hair TP Clinic - Egzona" (när bara 1 är vald, visar namnet)
+     * "Hair TP Clinic - 3 valda" (när 2-6 är valda, visar antal)
+   - Liten ChevronDown-ikon (2.5x2.5)
+   - Text storlek: 10px, font-bold
+   - Hover-effekt: bg-gray-800
+
+2. SMAL OCH KOMPAKT DROPDOWN
+   - Bredd: w-36 (144px) - mycket smalare än tidigare
+   - Gradient header: från rosa till lila (from-pink-50 to-purple-50)
+   - Header text: "Välj mailboxar" i 8px uppercase
+   - Max höjd: max-h-64 med scroll om nödvändigt
+
+3. FÄRGGLADA CHECKBOXAR
+   - Alternerar mellan rosa (accent-pink-500) och blå (accent-blue-500)
+   - Jämna index (0,2,4,6) = rosa
+   - Udda index (1,3,5) = blå
+   - Storlek: 3.5x3.5
+   - Rundade hörn med border-2
+
+4. MAILBOX-NAMN
+   - Visar BARA namnet med stor bokstav: "Egzona", "Contact", "Fazli", "Kvitto", "Info", "Kons", "Marknad"
+   - INTE hela email-adressen
+   - Text storlek: 11px, font-semibold
+   - Gap mellan namn och siffra: 1.5 (mycket tight)
+
+5. MEDDELANDERÄKNARE
+   - Små rundade badges: 9px text, rounded-full
+   - Bakgrund: bg-gray-100 (ljus läge)
+   - Min bredd: 18px, centrerad text
+   - Placerad direkt bredvid namnet (gap-1.5)
+
+6. HOVER-EFFEKTER
+   - Gradient hover: from-pink-50 to-purple-50
+   - Smooth transition på alla element
+   - Padding: px-2.5 py-1 (kompakt)
+
+7. ÄGARVY-BUBBLA
+   - Grå bubbla (bg-gray-100) bredvid mailbox-väljaren
+   - Text: "Ägarvy"
+   - Samma storlek och stil som mailbox-väljaren men grå
+   - Används för att växla mellan företag (om man har fler)
+   - ChevronDown-ikon
+   - Hover: bg-gray-200
+
+8. HEADER-LAYOUT
+   - Flex layout med gap-1.5
+   - Mailbox-väljare till vänster
+   - Ägarvy-bubbla bredvid
+   - Status-info till höger (ml-auto): "1 oägda · 2 hög risk · vecka..."
+
+
+IMPLEMENTATION I INBOX-PAGE-FINAL.TSX
+--------------------------------------
+
+A. MAILBOX-DEFINITIONER (7 st):
+const mailboxes: Mailbox[] = [
+  { id: "egzona", email: "egzona@hairtpclinic.com", label: "Egzona" },
+  { id: "contact", email: "contact@hairtpclinic.com", label: "Contact" },
+  { id: "fazli", email: "fazli@hairtpclinic.com", label: "Fazli" },
+  { id: "kvitto", email: "kvitto@hairtpclinic.com", label: "Kvitto" },
+  { id: "info", email: "info@hairtpclinic.com", label: "Info" },
+  { id: "kons", email: "kons@hairtpclinic.com", label: "Kons" },
+  { id: "marknad", email: "marknad@hairtpclinic.com", label: "Marknad" },
+];
+
+B. STATE MANAGEMENT:
+const [selectedMailboxes, setSelectedMailboxes] = useState<string[]>(mailboxes.map(m => m.id));
+const [showMailboxDropdown, setShowMailboxDropdown] = useState(false);
+
+C. KNAPP-TEXT LOGIK (getMailboxButtonText):
+- Alla valda (7 st) → "Hair TP Clinic - Alla mailboxar"
+- 1 vald → "Hair TP Clinic - {namn}"
+- 2-6 valda → "Hair TP Clinic - {antal} valda"
+
+D. TOGGLE LOGIK (handleMailboxToggle):
+- Klicka checkbox: lägg till eller ta bort från selectedMailboxes
+- Förhindra att tömma helt (behåll minst 1 vald)
+
+E. MEDDELANDERÄKNARE (mock data):
+- egzona: 2
+- fazli: 2
+- contact: 1
+- kvitto: 1
+- övriga: 0
+
+F. CHECKBOX-FÄRG LOGIK:
+const checkboxColor = index % 2 === 0 ? 'accent-pink-500' : 'accent-blue-500';
+
+
+KEY CSS CLASSES
+---------------
+Mailbox-knapp:
+- className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-gray-900 text-white hover:bg-gray-800"
+
+Dropdown container:
+- className="absolute top-full left-0 mt-1 w-36 bg-white border border-gray-200 rounded-lg shadow-xl z-50"
+
+Dropdown header:
+- className="px-2.5 py-1.5 border-b bg-gradient-to-r from-pink-50 to-purple-50"
+
+Mailbox item:
+- className="flex items-center gap-2 cursor-pointer hover:bg-gradient-to-r hover:from-pink-50 hover:to-purple-50 px-2.5 py-1"
+
+Checkbox:
+- className="w-3.5 h-3.5 rounded border-2 accent-pink-500 (eller accent-blue-500)"
+
+Ägarvy-bubbla:
+- className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-[10px] font-bold bg-gray-100 text-gray-700 hover:bg-gray-200"
+
+
+VIKTIGA DETALJER
+-----------------
+1. Dropdown är SMAL (w-36) - inte bred
+2. Namn UTAN @ - bara "Egzona" inte "egzona@..."
+3. Färgglada checkboxar som alternerar rosa/blå
+4. Gradient på header och hover
+5. Mycket tight gap mellan namn och siffra (gap-1.5)
+6. Alla element är kompakta med små text-storlekar
+7. Företagsnamnet "Hair TP Clinic -" finns ALLTID i knappen
+8. Ägarvy-bubbla finns bredvid mailbox-väljaren
+
+
+RESULTAT
+--------
+En elegant, kompakt och färgglad mailbox-väljare som:
+- Tar minimal plats i headern
+- Ger tydlig visuell feedback
+- Har roliga färger (rosa/blå checkboxar)
+- Visar dynamisk text baserat på urval
+- Inkluderar Ägarvy för multi-företag support
+- Följer premium design-språket för HairTP Clinic
