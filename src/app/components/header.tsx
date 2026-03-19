@@ -1,9 +1,10 @@
 import { useState, useEffect } from "react";
-import { Zap, Bell, Globe, Search, Menu } from "lucide-react";
+import { Zap, Bell, Globe, Search, Menu, FileText } from "lucide-react";
 import { ThemeToggle } from "./theme-toggle";
 import { useLanguage } from "../context/language-context";
 import { toast } from "sonner";
 import { useUnifiedSearch, UnifiedSearch } from "./unified-search";
+import { NotesViewerPanel } from "./notes-viewer-panel";
 
 interface HeaderProps {
   onMenuClick?: () => void;
@@ -13,6 +14,7 @@ export function Header({ onMenuClick }: HeaderProps) {
   const [searchQuery, setSearchQuery] = useState("");
   const [sprintMode, setSprintMode] = useState(true);
   const [sprintCount, setSprintCount] = useState(3);
+  const [showNotesViewer, setShowNotesViewer] = useState(false);
   const { language, setLanguage, t } = useLanguage();
   const unifiedSearch = useUnifiedSearch();
 
@@ -51,7 +53,7 @@ export function Header({ onMenuClick }: HeaderProps) {
         <div className="flex items-center gap-4">
           <div className="flex-shrink-0">
             {/* CCO Logo - KOMPAKT: Text-baserad */}
-            <div className="text-xl font-bold bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent">
+            <div className="text-[14px] font-bold bg-gradient-to-r from-pink-500 to-rose-500 bg-clip-text text-transparent">
               CCO
             </div>
           </div>
@@ -113,6 +115,15 @@ export function Header({ onMenuClick }: HeaderProps) {
             </span>
           </button>
 
+          {/* Notes - MINI */}
+          <button 
+            onClick={() => setShowNotesViewer(true)}
+            className="relative rounded-md p-1 hover:bg-purple-50 dark:hover:bg-purple-900/20 transition-colors group"
+            title="Alla Anteckningar"
+          >
+            <FileText className="h-3 w-3 text-gray-600 dark:text-gray-400 group-hover:text-purple-600 dark:group-hover:text-purple-400 transition-colors" />
+          </button>
+
           {/* Profile - MINI: 24px */}
           <button 
             onClick={handleProfile}
@@ -130,6 +141,8 @@ export function Header({ onMenuClick }: HeaderProps) {
 
       {/* Unified Search (⌘K) */}
       <UnifiedSearch isOpen={unifiedSearch.isOpen} onClose={unifiedSearch.close} />
+      {/* Notes Viewer Panel */}
+      <NotesViewerPanel isOpen={showNotesViewer} onClose={() => setShowNotesViewer(false)} />
     </header>
   );
 }

@@ -261,7 +261,7 @@ CCO Kliniken`);
 
         {/* AI Style Adjustments - Kompakta små knappar */}
         <div className="space-y-1.5">
-          <p className="text-[9px] font-semibold text-gray-600">✨ AI-justeringar</p>
+          <p className="text-[9px] font-semibold text-gray-600">✨ Smarta justeringar</p>
           <div className="grid grid-cols-2 gap-1.5">
             <button
               onClick={handleShortenMessage}
@@ -318,7 +318,7 @@ CCO Kliniken`);
               </div>
               <div className="flex-1">
                 <p className="text-[11px] font-bold text-blue-900 mb-0.5">
-                  🤖 AI-genererat förslag
+                  🤖 Smart förslag
                 </p>
                 <p className="text-[9px] text-blue-700 leading-relaxed">
                   Baserat på {aiContext}
@@ -347,7 +347,7 @@ CCO Kliniken`);
             <div className="flex items-start gap-1.5 p-2 rounded-lg bg-amber-50/50 border border-amber-200">
               <AlertTriangle className="h-3 w-3 text-amber-700 flex-shrink-0 mt-0.5" />
               <p className="text-[9px] font-semibold text-amber-900">
-                Granska alltid AI-genererade svar innan sändning
+                Granska alltid genererade svar innan sändning
               </p>
             </div>
           </div>

@@ -190,7 +190,7 @@ export function CustomerIntelligenceSidebarOptimized({ message }: CustomerIntell
         <div className="flex">
           {[
             { id: 'oversikt' as TabType, label: '📊 Översikt' },
-            { id: 'ai' as TabType, label: '🤖 AI' },
+            { id: 'ai' as TabType, label: '🤖 Smart' },
             { id: 'medical' as TabType, label: '🏥 Medicin' },
             { id: 'team' as TabType, label: '👥 Team' },
             { id: 'identity' as TabType, label: '👥 Identitet' },

@@ -725,9 +725,9 @@ export function ProgressiveMessageList({ onSelectMessage, selectedMessageId: ext
       comfortable: {
         avatarSize: 'h-11 w-11',
         padding: 'px-4 py-3',
-        nameSize: 'text-[15px]',
-        subjectSize: 'text-[14px]',
-        previewSize: 'text-[13px]',
+        nameSize: 'text-[14px]',
+        subjectSize: 'text-[12px]',
+        previewSize: 'text-[10px]',
         showPreview: true,
         showAllBadges: true,
         showSentiment: true,
@@ -738,9 +738,9 @@ export function ProgressiveMessageList({ onSelectMessage, selectedMessageId: ext
       compact: {
         avatarSize: 'h-8 w-8',
         padding: 'px-3 py-2',
-        nameSize: 'text-[13px]',
-        subjectSize: 'text-[12px]',
-        previewSize: 'text-[11px]',
+        nameSize: 'text-[11px]',
+        subjectSize: 'text-[10px]',
+        previewSize: 'text-[9px]',
         showPreview: true,
         showAllBadges: false, // Only show critical badges
         showSentiment: true,
@@ -751,9 +751,9 @@ export function ProgressiveMessageList({ onSelectMessage, selectedMessageId: ext
       'super-compact': {
         avatarSize: 'h-6 w-6',
         padding: 'px-3 py-1.5',
-        nameSize: 'text-[12px]',
-        subjectSize: 'text-[11px]',
-        previewSize: 'text-[10px]',
+        nameSize: 'text-[10px]',
+        subjectSize: 'text-[9px]',
+        previewSize: 'text-[8px]',
         showPreview: false,
         showAllBadges: false,
         showSentiment: false,
@@ -904,7 +904,7 @@ export function ProgressiveMessageList({ onSelectMessage, selectedMessageId: ext
                 </h3>
                 {/* Sentiment Emoji */}
                 {config.showSentiment && message.sentiment && (
-                  <span className="text-sm" title={`Sentiment: ${message.sentiment}`}>
+                  <span className="text-[10px]" title={`Sentiment: ${message.sentiment}`}>
                     {sentimentEmoji[message.sentiment]}
                   </span>
                 )}
@@ -913,7 +913,7 @@ export function ProgressiveMessageList({ onSelectMessage, selectedMessageId: ext
                   <Eye className="h-3.5 w-3.5 text-blue-500" title="Har läst ditt svar" />
                 )}
               </div>
-              <span className="flex-shrink-0 text-[13px] text-gray-500">{message.time}</span>
+              <span className="flex-shrink-0 text-[11px] text-gray-500">{message.time}</span>
             </div>
 
             {/* Subject with Competitor Warning */}
@@ -1182,7 +1182,7 @@ export function ProgressiveMessageList({ onSelectMessage, selectedMessageId: ext
                   <div className="flex items-start gap-1.5">
                     <MessageSquare className="h-3.5 w-3.5 text-blue-600 flex-shrink-0 mt-0.5" />
                     <div className="flex-1 min-w-0">
-                      <div className="font-semibold text-blue-700 mb-0.5">AI-föreslagen svar:</div>
+                      <div className="font-semibold text-blue-700 mb-0.5">Föreslagen svar:</div>
                       <div className="line-clamp-2 opacity-90">{message.suggestedReply}</div>
                     </div>
                     <Copy className="h-1 w-1 text-blue-600 opacity-0 group-hover/reply:opacity-100 transition-opacity mt-0.5" />

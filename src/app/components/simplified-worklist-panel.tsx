@@ -1,9 +1,23 @@
-import { Zap, CheckSquare, ChevronDown, ChevronRight, Inbox, Timer, AlertCircle, Calendar, CalendarClock, AlertTriangle, UserX, Stethoscope, Shield, Clock } from "lucide-react";
-import { useState } from "react";
+import { Inbox, Clock, Zap, AlertCircle, Calendar, Timer, CalendarClock, AlertTriangle, UserX, Stethoscope, Shield, ChevronDown, ChevronRight, GripVertical, Bell } from "lucide-react";
 import { MinimalMessageItem } from "./minimal-message-item";
-import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core';
-import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable';
-import { useSortable } from '@dnd-kit/sortable';
+import { Message } from "../types/message";
+import { useState, useEffect } from "react";
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+  DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  verticalListSortingStrategy,
+  useSortable,
+} from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
 interface SimplifiedWorklistPanelProps {
@@ -28,6 +42,7 @@ interface Category {
 const categories: Category[] = [
   { id: "all", label: "Alla trådar", icon: Inbox },
   { id: "later", label: "Senare", icon: Clock, color: "blue" },
+  { id: "followup", label: "Uppföljningar", icon: Bell, color: "purple" },
   { id: "sprint", label: "Sprint", icon: Zap, color: "green" },
   { id: "act-now", label: "Agera nu", icon: AlertCircle, color: "red" },
   { id: "bookable", label: "Bokningsåkara", icon: Calendar, color: "blue" },
@@ -133,7 +148,7 @@ export function SimplifiedWorklistPanel({
   const [orderedCategories, setOrderedCategories] = useState<Category[]>(categories);
 
   // Mock data
-  const allMessages = [
+  const allMessages: Message[] = [
     {
       id: "1",
       sender: "Anna Karlsson",

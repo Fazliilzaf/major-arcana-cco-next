@@ -249,7 +249,7 @@ Vid eventuella frågor är du välkommen att kontakta oss.`);
   };
 
   const handleRegenerate = () => {
-    toast.success("🔄 Regenererar med AI...");
+    toast.success("🔄 Regenererar svar...");
   };
 
   const handleCopyDraft = () => {
@@ -456,7 +456,7 @@ Vi ses imorgon! Om något ändras, hör av dig snarast.`
               <div className="rounded-lg bg-gradient-to-br from-blue-50 to-indigo-50 border border-blue-200 p-3">
                 <div className="flex items-center gap-2 mb-2">
                   <Bot className="h-4 w-4 text-blue-600" />
-                  <h5 className="text-xs font-bold text-gray-900">AI-sammanfattning</h5>
+                  <h5 className="text-xs font-bold text-gray-900">Sammanfattning</h5>
                 </div>
                 <p className="text-[11px] leading-relaxed text-gray-700">
                   {customerData.conversationSummary}
@@ -647,7 +647,7 @@ Vi ses imorgon! Om något ändras, hör av dig snarast.`
                               <button
                                 key={emoji}
                                 onClick={() => insertEmoji(emoji)}
-                                className="text-xl hover:bg-gray-100 rounded p-1 transition-colors"
+                                className="text-[14px] hover:bg-gray-100 rounded p-1 transition-colors"
                               >
                                 {emoji}
                               </button>
@@ -758,7 +758,7 @@ Vi ses imorgon! Om något ändras, hör av dig snarast.`
                 <summary className="cursor-pointer list-none">
                   <div className="flex items-center gap-2 rounded-lg border border-gray-200 bg-gradient-to-br from-blue-50 to-white px-3 py-2 hover:border-blue-300 transition-colors">
                     <Sparkles className="h-3 w-3 text-blue-600" />
-                    <span className="text-xs font-semibold text-gray-900">AI-verktyg & Inställningar</span>
+                    <span className="text-xs font-semibold text-gray-900">Smarta verktyg & Inställningar</span>
                     <span className="ml-auto rounded-full bg-gradient-to-r from-green-500 to-emerald-500 px-2 py-0.5 text-[9px] font-bold text-white">
                       92%
                     </span>
@@ -770,7 +770,7 @@ Vi ses imorgon! Om något ändras, hör av dig snarast.`
                     <div className="flex items-center gap-2 mb-2">
                       <div className="flex items-center gap-1.5">
                         <Sparkles className="h-4 w-4 text-green-600" />
-                        <h5 className="text-xs font-bold text-green-900 uppercase tracking-wide">✨ AI-stöd</h5>
+                        <h5 className="text-xs font-bold text-green-900 uppercase tracking-wide">✨ Smart stöd</h5>
                       </div>
                       <div className="ml-auto rounded-full bg-gradient-to-r from-green-500 to-emerald-500 px-3 py-1 text-sm font-bold text-white shadow-sm">
                         92%
@@ -780,7 +780,7 @@ Vi ses imorgon! Om något ändras, hör av dig snarast.`
                       Bokningsförslag rekommenderas
                     </p>
                     <p className="text-[10px] text-green-800 leading-tight">
-                      Baserat på konversationskontext, kundpreferenser och bokningshistorik rekommenderar AI starkt att skicka ett bokningsförslag för fredag 09:00.
+                      Baserat på konversationskontext, kundpreferenser och bokningshistorik rekommenderas starkt att skicka ett bokningsförslag för fredag 09:00.
                     </p>
                   </div>
 
@@ -788,7 +788,7 @@ Vi ses imorgon! Om något ändras, hör av dig snarast.`
                   <div className="rounded-lg bg-gradient-to-br from-purple-50 to-pink-50 border border-purple-200 p-2.5">
                     <div className="flex items-center gap-2 mb-2">
                       <Target className="h-3.5 w-3.5 text-purple-600" />
-                      <h5 className="text-[10px] font-bold text-gray-900">AI-rekommendationer</h5>
+                      <h5 className="text-[10px] font-bold text-gray-900">Smarta rekommendationer</h5>
                     </div>
                     <div className="space-y-1.5">
                       <button
@@ -863,7 +863,7 @@ Vi ses imorgon! Om något ändras, hör av dig snarast.`
                   <div className="rounded-lg bg-gradient-to-br from-indigo-50 to-blue-50 border-2 border-indigo-300 p-2.5">
                     <div className="flex items-center gap-2 mb-2">
                       <Bot className="h-3.5 w-3.5 text-indigo-600" />
-                      <h5 className="text-[10px] font-bold text-gray-900">AI-inställningar</h5>
+                      <h5 className="text-[10px] font-bold text-gray-900">Smarta inställningar</h5>
                     </div>
                     
                     {/* AI Mode */}
@@ -879,7 +879,7 @@ Vi ses imorgon! Om något ändras, hör av dig snarast.`
                           />
                           <div className="flex-1">
                             <p className="text-[10px] font-semibold text-gray-900 group-hover:text-indigo-700">Endast konversation</p>
-                            <p className="text-[9px] text-gray-600 leading-tight">AI använder bara mejlkonversationen.</p>
+                            <p className="text-[9px] text-gray-600 leading-tight">Använder bara mejlkonversationen.</p>
                           </div>
                         </label>
                         <label className="flex items-start gap-1.5 cursor-pointer group">
@@ -891,7 +891,7 @@ Vi ses imorgon! Om något ändras, hör av dig snarast.`
                           />
                           <div className="flex-1">
                             <p className="text-[10px] font-semibold text-gray-900 group-hover:text-indigo-700">Full kontext</p>
-                            <p className="text-[9px] text-gray-600 leading-tight">AI använder allt: önskemål, noter, historik och preferenser.</p>
+                            <p className="text-[9px] text-gray-600 leading-tight">Använder allt: önskemål, noter, historik och preferenser.</p>
                           </div>
                         </label>
                       </div>
@@ -946,7 +946,7 @@ Vi ses imorgon! Om något ändras, hör av dig snarast.`
                         <div className="flex items-start gap-1">
                           <AlertCircle className="h-3 w-3 text-amber-600 flex-shrink-0 mt-0.5" />
                           <p className="text-[9px] text-amber-800 leading-tight">
-                            <strong>OBS:</strong> AI kan nu ta beslut baserat på noter och historik. Granska alltid svaret!
+                            <strong>OBS:</strong> Systemet tar nu beslut baserat på noter och historik. Granska alltid svaret!
                           </p>
                         </div>
                       </div>
@@ -1068,7 +1068,7 @@ Vi ses imorgon! Om något ändras, hör av dig snarast.`
                       <Trash2 className="h-6 w-6 text-red-600" />
                     </div>
                     <div>
-                      <h3 className="text-lg font-semibold text-gray-900">Radera meddelande?</h3>
+                      <h3 className="text-[14px] font-bold text-gray-900">Radera meddelande?</h3>
                       <p className="text-sm text-gray-500">Detta går att ångra inom 30 dagar</p>
                     </div>
                   </div>

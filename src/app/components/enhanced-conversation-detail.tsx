@@ -1,19 +1,47 @@
-import { MoreHorizontal, Calendar, User, FileText, ShoppingBag, DollarSign, TrendingUp, Mail, Phone, MessageSquare, AlertCircle, Clock, CheckCircle, AlertTriangle, Send, Sparkles, FileDown, Maximize2, Star, Flame } from "lucide-react";
-import { useState } from "react";
+import { MoreHorizontal, Calendar, User, FileText, ShoppingBag, DollarSign, TrendingUp, Mail, Phone, MessageSquare, AlertCircle, Clock, CheckCircle, AlertTriangle, Send, Sparkles, FileDown, Maximize2, Star, Flame, StickyNote, Eye, Tag, Lock, Users, Trash2, ChevronDown, ChevronUp, RefreshCw, Plus } from "lucide-react";
+import { useState, useEffect } from "react";
 import { toast } from "sonner";
 import { ResponseStudioModal } from "./response-studio-modal";
+import { NotesDialog, NoteData, getAllNotesFromStorage, getNotesByCustomer } from "./notes-dialog";
+import { NotesViewerPanel } from "./notes-viewer-panel";
+import { ScheduleFollowupDialog, FollowupData } from "./schedule-followup-dialog";
 
-type TabType = "konversation" | "kundhistorik" | "historik";
+type TabType = "konversation" | "kundhistorik" | "historik" | "anteckningar";
 
 export function EnhancedConversationDetail() {
   const [activeTab, setActiveTab] = useState<TabType>("konversation");
   const [draftMessage, setDraftMessage] = useState("");
   const [showResponseStudio, setShowResponseStudio] = useState(false);
+  const [showNotesDialog, setShowNotesDialog] = useState(false);
+  const [showNotesViewer, setShowNotesViewer] = useState(false);
+  const [showScheduleDialog, setShowScheduleDialog] = useState(false);
+  const [customerNotes, setCustomerNotes] = useState<NoteData[]>([]);
+
+  const currentCustomerName = "Johan Svensson";
+
+  // Load notes when component mounts or when switching to notes tab
+  useEffect(() => {
+    if (activeTab === "anteckningar") {
+      loadCustomerNotes();
+    }
+  }, [activeTab]);
+
+  const loadCustomerNotes = () => {
+    const notes = getNotesByCustomer(currentCustomerName);
+    // Sort by timestamp (newest first)
+    notes.sort((a, b) => {
+      const dateA = new Date(a.timestamp || 0).getTime();
+      const dateB = new Date(b.timestamp || 0).getTime();
+      return dateB - dateA;
+    });
+    setCustomerNotes(notes);
+  };
 
   const tabs = [
     { id: "konversation" as TabType, label: "Konversation" },
     { id: "kundhistorik" as TabType, label: "Kundhistorik" },
     { id: "historik" as TabType, label: "Historik" },
+    { id: "anteckningar" as TabType, label: "Anteckningar", badge: customerNotes.length || undefined },
   ];
 
   const handleTabChange = (tabId: TabType) => {
@@ -35,7 +63,7 @@ export function EnhancedConversationDetail() {
 
   const handleAIReply = () => {
     setDraftMessage("Hej Johan! Självklart! Vi har lediga tider på torsdag 14:00 eller fredag 10:30. Vilken passar bäst?");
-    toast.success("AI-svar infogat!");
+    toast.success("Smart svar infogat!");
   };
 
   const handleTemplate = () => {
@@ -55,11 +83,35 @@ export function EnhancedConversationDetail() {
     setShowResponseStudio(true);
   };
 
+  const handleOpenNotesDialog = () => {
+    console.log("🔵 ANTECKNINGAR KNAPP KLICKAD!");
+    setShowNotesDialog(true);
+  };
+
+  const handleSaveNote = (noteData: NoteData) => {
+    console.log("Note saved:", noteData);
+    setShowNotesDialog(false);
+    // Reload notes after saving
+    loadCustomerNotes();
+    toast.success("Anteckning sparad!");
+  };
+
+  const handleOpenScheduleDialog = () => {
+    setShowScheduleDialog(true);
+  };
+
+  const handleScheduleFollowup = (followupData: FollowupData) => {
+    console.log("Followup scheduled:", followupData);
+    // Here we would save the followup to state/database
+    setShowScheduleDialog(false);
+    toast.success("Uppföljning schemalagd!");
+  };
+
   return (
     <div className="flex h-full flex-col">
       {/* Header */}
       <div className="flex items-center justify-between border-b border-gray-100 px-5 py-3">
-        <h2 className="text-[16px] font-semibold text-gray-900">Bokning av tid</h2>
+        <h2 className="text-[14px] font-bold text-gray-900">Bokning av tid</h2>
         <button 
           onClick={handleMoreOptions}
           className="rounded-lg p-1 hover:bg-gray-50 transition-colors"
@@ -85,6 +137,11 @@ export function EnhancedConversationDetail() {
               {activeTab === tab.id && (
                 <div className="absolute bottom-0 left-0 right-0 h-[2px] bg-gray-900 rounded-full" />
               )}
+              {tab.badge !== undefined && (
+                <div className="absolute top-0 right-0 -translate-y-1/2 translate-x-1/2 bg-red-500 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full">
+                  {tab.badge}
+                </div>
+              )}
             </button>
           ))}
         </div>
@@ -92,9 +149,10 @@ export function EnhancedConversationDetail() {
 
       {/* Content - Scrollable */}
       <div className="flex-1 overflow-y-auto">
-        {activeTab === "konversation" && <ConversationContent handleMessageOptions={handleMessageOptions} />}
+        {activeTab === "konversation" && <ConversationContent handleMessageOptions={handleMessageOptions} handleOpenScheduleDialog={handleOpenScheduleDialog} />}
         {activeTab === "kundhistorik" && <CustomerHistoryContent />}
         {activeTab === "historik" && <ActivityHistoryContent />}
+        {activeTab === "anteckningar" && <NotesTabContent customerName={currentCustomerName} notes={customerNotes} onRefresh={loadCustomerNotes} onCreateNew={handleOpenNotesDialog} />}
       </div>
 
       {/* Quick Actions Bar */}
@@ -114,7 +172,7 @@ export function EnhancedConversationDetail() {
               <button
                 onClick={handleAIReply}
                 className="absolute right-2 bottom-2 p-1 rounded-md hover:bg-blue-50 transition-colors"
-                title="AI-förslag"
+                title="Smart förslag"
               >
                 <Sparkles className="h-4 w-4 text-blue-500" />
               </button>
@@ -141,6 +199,20 @@ export function EnhancedConversationDetail() {
                   <Calendar className="h-3 w-3" />
                 </button>
                 <button
+                  onClick={handleOpenNotesDialog}
+                  className="flex items-center justify-center gap-1 px-2 py-1 rounded-md bg-blue-100 text-blue-700 text-[10px] font-semibold hover:bg-blue-200 transition-all"
+                  title="Anteckningar"
+                >
+                  <StickyNote className="h-3 w-3" />
+                </button>
+                <button
+                  onClick={() => setShowNotesViewer(true)}
+                  className="flex items-center justify-center gap-1 px-2 py-1 rounded-md bg-purple-100 text-purple-700 text-[10px] font-semibold hover:bg-purple-200 transition-all"
+                  title="Visa alla anteckningar"
+                >
+                  <Eye className="h-3 w-3" />
+                </button>
+                <button
                   onClick={handleTemplate}
                   className="flex items-center justify-center gap-1 px-2 py-1 rounded-md bg-gray-200 text-gray-700 text-[10px] font-semibold hover:bg-gray-300 transition-all"
                   title="Mallar"
@@ -152,7 +224,6 @@ export function EnhancedConversationDetail() {
                   className="flex items-center justify-center gap-1.5 px-3 py-1.5 rounded-lg bg-gradient-to-r from-pink-600 to-pink-700 text-white text-[11px] font-bold hover:from-pink-700 hover:to-pink-800 transition-all shadow-sm"
                   title="Öppna Svarstudio"
                 >
-                  <Sparkles className="h-3.5 w-3.5" />
                   Svarstudio
                 </button>
               </div>
@@ -161,17 +232,46 @@ export function EnhancedConversationDetail() {
         </div>
       )}
 
-      {/* Svarstudio Modal */}
-      <ResponseStudioModal 
+      {/* Response Studio Modal */}
+      <ResponseStudioModal
         isOpen={showResponseStudio}
         onClose={() => setShowResponseStudio(false)}
-        initialDraft={draftMessage}
+        customerName="Johan Svensson"
+        conversationContext="Kunden frågar om lediga tider för PRP-behandling nästa vecka"
+        onSendResponse={(response) => {
+          setDraftMessage(response);
+          toast.success("Svar infogat i meddelandefältet");
+        }}
+      />
+
+      {/* Notes Dialog */}
+      <NotesDialog
+        isOpen={showNotesDialog}
+        onClose={() => setShowNotesDialog(false)}
+        customerName="Johan Svensson"
+        conversationContext="Kunden frågar om lediga tider för PRP-behandling nästa vecka"
+        onSave={handleSaveNote}
+      />
+
+      {/* Notes Viewer Panel */}
+      <NotesViewerPanel
+        isOpen={showNotesViewer}
+        onClose={() => setShowNotesViewer(false)}
+        filterByCustomer="Johan Svensson"
+      />
+
+      {/* Schedule Followup Dialog */}
+      <ScheduleFollowupDialog
+        isOpen={showScheduleDialog}
+        onClose={() => setShowScheduleDialog(false)}
+        customerName="Johan Svensson"
+        onSchedule={handleScheduleFollowup}
       />
     </div>
   );
 }
 
-function ConversationContent({ handleMessageOptions }: { handleMessageOptions: () => void }) {
+function ConversationContent({ handleMessageOptions, handleOpenScheduleDialog }: { handleMessageOptions: () => void, handleOpenScheduleDialog: () => void }) {
   // Calculate SLA with business hours
   const slaMinutesLeft = 45; // 45 minutes left
   const slaTotal = 240; // 4 hours total SLA
@@ -212,7 +312,7 @@ function ConversationContent({ handleMessageOptions }: { handleMessageOptions: (
               {hoursStagnant}h inaktiv
             </span>
             <button
-              onClick={() => toast.success("Schemalagt uppföljning")}
+              onClick={handleOpenScheduleDialog}
               className="ml-1 rounded-md bg-orange-100 px-1.5 py-0.5 text-[10px] font-medium text-orange-800 hover:bg-orange-200 transition-colors"
             >
               Följ upp
@@ -423,7 +523,7 @@ function CustomerHistoryContent() {
             </div>
             <span className="text-[9px] font-semibold text-blue-700 uppercase tracking-wide">Köp</span>
           </div>
-          <p className="text-lg font-bold text-gray-900">12</p>
+          <p className="text-[14px] font-bold text-gray-900">12</p>
           <p className="text-[9px] text-gray-600 font-medium">Behandlingar</p>
         </div>
 
@@ -434,7 +534,7 @@ function CustomerHistoryContent() {
             </div>
             <span className="text-[9px] font-semibold text-emerald-700 uppercase tracking-wide">LTV</span>
           </div>
-          <p className="text-lg font-bold text-gray-900">46K</p>
+          <p className="text-[14px] font-bold text-gray-900">46K</p>
           <p className="text-[9px] text-gray-600 font-medium">Livstidsvärde</p>
         </div>
 
@@ -445,7 +545,7 @@ function CustomerHistoryContent() {
             </div>
             <span className="text-[9px] font-semibold text-purple-700 uppercase tracking-wide">Status</span>
           </div>
-          <p className="text-lg font-bold text-gray-900">VIP</p>
+          <p className="text-[14px] font-bold text-gray-900">VIP</p>
           <p className="text-[9px] text-gray-600 font-medium">Återkommande</p>
         </div>
       </div>
@@ -632,6 +732,222 @@ function ActivityHistoryContent() {
           </div>
         ))}
       </div>
+    </div>
+  );
+}
+
+function NotesTabContent({ customerName, notes, onRefresh, onCreateNew }: { customerName: string, notes: NoteData[], onRefresh: () => void, onCreateNew: () => void }) {
+  const [expandedNotes, setExpandedNotes] = useState<Set<string>>(new Set());
+  
+  const toggleNoteExpansion = (noteId: string) => {
+    const newExpanded = new Set(expandedNotes);
+    if (newExpanded.has(noteId)) {
+      newExpanded.delete(noteId);
+    } else {
+      newExpanded.add(noteId);
+    }
+    setExpandedNotes(newExpanded);
+  };
+
+  const getCategoryLabel = (category: string) => {
+    const labels: Record<string, string> = {
+      kundprofil: "Kundprofil",
+      konversation: "Konversation",
+      medicinsk: "Medicinsk",
+      betalning: "Betalning",
+      sla: "SLA/Eskalering",
+      intern: "Intern",
+      uppfoljning: "Uppföljning",
+    };
+    return labels[category] || category;
+  };
+
+  const getCategoryIcon = (category: string) => {
+    const icons: Record<string, string> = {
+      kundprofil: "👤",
+      konversation: "💬",
+      medicinsk: "🏥",
+      betalning: "💰",
+      sla: "🚨",
+      intern: "🔒",
+      uppfoljning: "📅",
+    };
+    return icons[category] || "📝";
+  };
+
+  const getPriorityColor = (priority: string) => {
+    switch (priority) {
+      case "high": return "text-red-700 bg-red-100 border-red-300";
+      case "medium": return "text-yellow-700 bg-yellow-100 border-yellow-300";
+      case "low": return "text-green-700 bg-green-100 border-green-300";
+      default: return "text-gray-700 bg-gray-100 border-gray-300";
+    }
+  };
+
+  const formatDate = (timestamp?: string) => {
+    if (!timestamp) return "Okänt datum";
+    const date = new Date(timestamp);
+    return date.toLocaleString("sv-SE", {
+      year: "numeric",
+      month: "short",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit"
+    });
+  };
+
+  return (
+    <div className="p-5">
+      <div className="mb-4 flex items-center justify-between">
+        <div>
+          <h3 className="text-[14px] font-bold text-gray-900 dark:text-gray-100">Anteckningar för {customerName}</h3>
+          <p className="text-[10px] text-gray-600 dark:text-gray-400">
+            {notes.length} {notes.length === 1 ? "anteckning" : "anteckningar"} sparad
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <button
+            onClick={onRefresh}
+            className="flex items-center gap-1 px-2 py-1 rounded-md bg-gray-100 text-gray-700 text-[10px] font-semibold hover:bg-gray-200 transition-all"
+            title="Uppdatera"
+          >
+            <RefreshCw className="h-3 w-3" />
+            Uppdatera
+          </button>
+          <button
+            onClick={onCreateNew}
+            className="flex items-center gap-1 px-2 py-1 rounded-md bg-gradient-to-r from-pink-500 to-rose-500 text-white text-[10px] font-semibold hover:from-pink-600 hover:to-rose-600 transition-all shadow-sm"
+            title="Ny anteckning"
+          >
+            <Plus className="h-3 w-3" />
+            Ny anteckning
+          </button>
+        </div>
+      </div>
+
+      {/* Notes List */}
+      {notes.length === 0 ? (
+        <div className="text-center py-12">
+          <FileText className="h-12 w-12 text-gray-400 mx-auto mb-3" />
+          <p className="text-[11px] text-gray-600 mb-3">Inga anteckningar för {customerName} än</p>
+          <button
+            onClick={onCreateNew}
+            className="flex items-center gap-1 px-3 py-1.5 rounded-md bg-gradient-to-r from-pink-500 to-rose-500 text-white text-[10px] font-semibold hover:from-pink-600 hover:to-rose-600 transition-all shadow-sm mx-auto"
+          >
+            <Plus className="h-3 w-3" />
+            Skapa första anteckningen
+          </button>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {notes.map((note) => {
+            const isExpanded = expandedNotes.has(note.id || "");
+            return (
+              <div
+                key={note.id}
+                className="border-2 border-gray-200 dark:border-gray-700 rounded-lg bg-white dark:bg-gray-800 overflow-hidden hover:border-purple-300 dark:hover:border-purple-600 transition-all"
+              >
+                {/* Note Header */}
+                <div className="px-3 py-2 bg-gradient-to-r from-gray-50 to-white dark:from-gray-800/50 dark:to-gray-800 border-b border-gray-200 dark:border-gray-700">
+                  <div className="flex items-start justify-between gap-2">
+                    <div className="flex items-center gap-1.5 flex-1 min-w-0">
+                      <span className="text-base leading-none">{getCategoryIcon(note.category)}</span>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-1.5 flex-wrap">
+                          <h4 className="text-[10px] font-bold text-gray-900 dark:text-gray-100">
+                            {getCategoryLabel(note.category)}
+                          </h4>
+                          <span className={`px-1.5 py-0.5 rounded text-[7px] font-bold border ${getPriorityColor(note.priority)}`}>
+                            {note.priority === "high" ? "🔴 HÖG" : note.priority === "medium" ? "🟡 MEDEL" : "🟢 LÅG"}
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          <Clock className="h-2.5 w-2.5 text-gray-500 dark:text-gray-400" />
+                          <span className="text-[8px] text-gray-600 dark:text-gray-400">
+                            {formatDate(note.timestamp)}
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <button
+                        onClick={() => toggleNoteExpansion(note.id || "")}
+                        className="p-1 rounded hover:bg-gray-200 dark:hover:bg-gray-700 text-gray-600 dark:text-gray-400"
+                        title={isExpanded ? "Dölj" : "Visa mer"}
+                      >
+                        {isExpanded ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Note Content */}
+                <div className="px-3 py-2">
+                  <p className={`text-[9px] text-gray-800 dark:text-gray-200 whitespace-pre-wrap ${!isExpanded && "line-clamp-2"}`}>
+                    {note.content}
+                  </p>
+
+                  {/* Tags */}
+                  {note.tags.length > 0 && (
+                    <div className="flex flex-wrap gap-1 mt-2">
+                      {note.tags.map((tag, idx) => (
+                        <span
+                          key={idx}
+                          className="inline-flex items-center gap-0.5 px-1.5 py-0.5 rounded-full bg-purple-100 dark:bg-purple-900 text-purple-700 dark:text-purple-300 text-[8px] font-medium border border-purple-200 dark:border-purple-700"
+                        >
+                          <Tag className="h-2 w-2" />
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  )}
+
+                  {/* Auto-linked items (expanded view) */}
+                  {isExpanded && note.autoLinkedTo && (
+                    <div className="mt-2 pt-2 border-t border-gray-200 dark:border-gray-700">
+                      <p className="text-[8px] font-bold text-gray-700 dark:text-gray-300 uppercase tracking-wide mb-1">
+                        Kopplad till:
+                      </p>
+                      <div className="space-y-0.5">
+                        {note.autoLinkedTo.customers && note.autoLinkedTo.customers.length > 0 && (
+                          <div className="flex items-center gap-1 text-[8px] text-gray-600 dark:text-gray-400">
+                            <User className="h-2.5 w-2.5" />
+                            <span>{note.autoLinkedTo.customers.join(", ")}</span>
+                          </div>
+                        )}
+                        {note.autoLinkedTo.conversations && note.autoLinkedTo.conversations.length > 0 && (
+                          <div className="flex items-center gap-1 text-[8px] text-gray-600 dark:text-gray-400">
+                            💬
+                            <span>{note.autoLinkedTo.conversations.join(", ")}</span>
+                          </div>
+                        )}
+                        {note.autoLinkedTo.treatments && note.autoLinkedTo.treatments.length > 0 && (
+                          <div className="flex items-center gap-1 text-[8px] text-gray-600 dark:text-gray-400">
+                            🏥
+                            <span>{note.autoLinkedTo.treatments.join(", ")}</span>
+                          </div>
+                        )}
+                        {note.autoLinkedTo.bookings && note.autoLinkedTo.bookings.length > 0 && (
+                          <div className="flex items-center gap-1 text-[8px] text-gray-600 dark:text-gray-400">
+                            📅
+                            <span>{note.autoLinkedTo.bookings.join(", ")}</span>
+                          </div>
+                        )}
+                        {note.autoLinkedTo.teamMembers && note.autoLinkedTo.teamMembers.length > 0 && (
+                          <div className="flex items-center gap-1 text-[8px] text-gray-600 dark:text-gray-400">
+                            👥
+                            <span>{note.autoLinkedTo.teamMembers.join(", ")}</span>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </div>
+            );
+          })}
+        </div>
+      )}
     </div>
   );
 }

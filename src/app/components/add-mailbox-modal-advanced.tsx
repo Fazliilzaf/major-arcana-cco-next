@@ -190,7 +190,7 @@ export function AddMailboxModalAdvanced({ onClose, onAdd, availableSignatures }:
               {aiSuggestion && (
                 <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-1 text-[10px] font-medium text-pink-600">
                   <Sparkles className="h-3 w-3" />
-                  AI detekterat
+                  Auto-detekterat
                 </div>
               )}
             </div>

@@ -180,7 +180,7 @@ export function CustomerIntelligenceSidebar({ message }: CustomerIntelligenceSid
                 : 'text-gray-600 hover:text-gray-900'
             }`}
           >
-            🤖 AI
+            🤖 Smart
           </button>
           <button
             onClick={() => setActiveTab('medical')}
@@ -408,7 +408,7 @@ export function CustomerIntelligenceSidebar({ message }: CustomerIntelligenceSid
             {/* AI Suggested Reply */}
             {message.suggestedReply && (
               <div className="space-y-2">
-                <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide">AI-Föreslagen Svar</h4>
+                <h4 className="text-xs font-bold text-gray-700 uppercase tracking-wide">Föreslagen Svar</h4>
                 <div className="p-3 rounded-lg bg-blue-50 border border-blue-200">
                   <div className="flex items-start gap-2 mb-2">
                     <MessageSquare className="h-4 w-4 text-blue-600 flex-shrink-0 mt-0.5" />
@@ -491,7 +491,7 @@ export function CustomerIntelligenceSidebar({ message }: CustomerIntelligenceSid
             {!message.suggestedReply && !message.suggestedSlots?.length && !message.upsellOpportunity && (
               <div className="text-center py-8">
                 <Sparkles className="h-10 w-10 text-gray-300 mx-auto mb-2" />
-                <p className="text-xs text-gray-500">Inga AI-insikter än</p>
+                <p className="text-xs text-gray-500">Inga smarta insikter än</p>
               </div>
             )}
           </div>

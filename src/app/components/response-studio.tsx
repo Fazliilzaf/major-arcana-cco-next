@@ -82,7 +82,7 @@ Hör av dig om du har några frågor.`);
   };
 
   const handleGenerateAI = () => {
-    toast.info("AI-generera svar");
+    toast.info("Generera svar");
   };
 
   const handleSchedule = () => {
@@ -238,7 +238,7 @@ Hör av dig om du har några frågor.`);
             <button
               onClick={handleGenerateAI}
               className="flex items-center justify-center w-8 h-8 rounded-lg bg-gradient-to-br from-purple-500 to-pink-500 text-white shadow-sm hover:shadow-md transition-all"
-              title="AI-generera svar"
+              title="Generera svar"
             >
               <Sparkles className="h-4 w-4" />
             </button>

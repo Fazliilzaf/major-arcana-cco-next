@@ -139,14 +139,16 @@ export function SvarsstudioPanel() {
         </div>
       </div>
 
-      {/* AI-STÖD */}
+      {/* SMART STÖD */}
       <div className="px-3 py-2 bg-purple-50/30 dark:bg-purple-950/10">
         <div className="flex items-start gap-2">
-          <Sparkles className="h-3 w-3 text-purple-600 dark:text-purple-400 flex-shrink-0 mt-0.5" />
-          <div>
+          <div className="p-1 rounded-md bg-purple-100 dark:bg-purple-900/30">
+            <Sparkles className="h-3 w-3 text-purple-600 dark:text-purple-400" />
+          </div>
+          <div className="flex-1 min-w-0">
             <div className="flex items-baseline gap-1.5 mb-0.5">
               <h4 className="text-[10px] font-bold text-purple-900 dark:text-purple-100">
-                AI-STÖD
+                SMART STÖD
               </h4>
               <span className="text-[9px] font-semibold text-purple-700 dark:text-purple-300">
                 Bokningsförslag · 92%

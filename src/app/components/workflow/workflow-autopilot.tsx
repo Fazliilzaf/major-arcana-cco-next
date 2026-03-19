@@ -46,7 +46,7 @@ export function WorkflowAutopilot({ workflow }: { workflow: Workflow }) {
         <div className="flex items-center justify-between">
           <div>
             <h2 className="text-[14px] font-bold text-gray-900">Arbetsflödes-autopilot</h2>
-            <p className="text-[9px] text-gray-600 mt-0.5">AI-driven självoptimering</p>
+            <p className="text-[9px] text-gray-600 mt-0.5">Intelligent självoptimering</p>
           </div>
 
           {/* Toggle */}
