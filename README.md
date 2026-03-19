@@ -7,6 +7,8 @@
 [![Lighthouse](https://img.shields.io/badge/lighthouse-98-success)](./STEP-7-SUMMARY.md)
 [![Production Ready](https://img.shields.io/badge/production-ready-success)](./DEPLOYMENT-GUIDE.md)
 
+> **📋 [SOURCE OF TRUTH](./SOURCE-OF-TRUTH.md)** - Se denna fil för officiell dokumentation av vilka filer som är aktiva!
+
 ---
 
 ## 🌟 FEATURES

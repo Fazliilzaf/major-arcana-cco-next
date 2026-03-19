@@ -1,7 +1,5 @@
 import { createBrowserRouter, Navigate } from "react-router";
 import { MainLayout } from "./layouts/main-layout";
-import { InboxPage } from "./pages/inbox-page";
-import { InboxPageNew } from "./pages/inbox-page-new";
 import { InboxPageFinal } from "./pages/inbox-page-final";
 import { LaterPage } from "./pages/later-page";
 import { SentPage } from "./pages/sent-page";
