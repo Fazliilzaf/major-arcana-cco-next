@@ -3,7 +3,7 @@ import { Button } from "./ui/button";
 import { useState, useRef } from "react";
 import { toast } from "sonner";
 import { AnimatedSignatureLogo } from "./animated-signature-logo";
-import signatureLogo from "figma:asset/74e827600f608f517f2916a96a413e7032a66eb4.png";
+import signatureLogo from "../../assets/74e827600f608f517f2916a96a413e7032a66eb4.png";
 
 // Instagram and Facebook icons
 function Instagram({ className }: { className?: string }) {
