@@ -86,6 +86,15 @@ export function MinimalMessageItem({
   
   return (
     <div
+      role="button"
+      tabIndex={0}
+      aria-label={`Öppna konversation med ${message.sender}: ${message.subject}`}
+      onKeyDown={(e) => {
+        if (e.key === "Enter" || e.key === " ") {
+          e.preventDefault();
+          onClick();
+        }
+      }}
       onClick={onClick}
       className={`group relative cursor-pointer border-b border-gray-100 dark:border-gray-800 px-2.5 py-1.5 transition-all ${ 
         message.unread

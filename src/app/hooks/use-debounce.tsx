@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 /**
  * Debounce a value - delays updating the value until after the delay
@@ -54,19 +54,29 @@ export function useDebouncedCallback<T extends (...args: any[]) => any>(
   callback: T,
   delay: number = 300
 ): (...args: Parameters<T>) => void {
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout | null>(null);
+  const timeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const callbackRef = useRef(callback);
+  callbackRef.current = callback;
 
-  return (...args: Parameters<T>) => {
-    // Clear existing timeout
-    if (timeoutId) {
-      clearTimeout(timeoutId);
-    }
+  useEffect(() => {
+    return () => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+        timeoutRef.current = null;
+      }
+    };
+  }, []);
 
-    // Set new timeout
-    const newTimeoutId = setTimeout(() => {
-      callback(...args);
-    }, delay);
-
-    setTimeoutId(newTimeoutId);
-  };
+  return useCallback(
+    (...args: Parameters<T>) => {
+      if (timeoutRef.current) {
+        clearTimeout(timeoutRef.current);
+      }
+      timeoutRef.current = setTimeout(() => {
+        timeoutRef.current = null;
+        callbackRef.current(...args);
+      }, delay);
+    },
+    [delay]
+  );
 }

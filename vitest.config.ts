@@ -9,6 +9,9 @@ export default defineConfig({
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
     css: true,
+    /** Längre gräns för App/integrationstester som väntar in router + layout */
+    testTimeout: 20_000,
+    hookTimeout: 15_000,
     coverage: {
       provider: 'v8',
       reporter: ['text', 'json', 'html'],

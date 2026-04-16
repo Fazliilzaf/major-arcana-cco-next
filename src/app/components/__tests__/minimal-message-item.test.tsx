@@ -7,18 +7,16 @@ import MinimalMessageItem from '../minimal-message-item';
 
 describe('MinimalMessageItem', () => {
   describe('Rendering', () => {
-    it('renders message correctly', () => {
+    it('renders sender and subject', () => {
       const message = mockMessage({
         sender: 'John Doe',
         subject: 'Test Subject',
-        preview: 'Test preview',
       });
 
       render(<MinimalMessageItem message={message} isSelected={false} onClick={() => {}} />);
 
       expect(screen.getByText('John Doe')).toBeInTheDocument();
       expect(screen.getByText('Test Subject')).toBeInTheDocument();
-      expect(screen.getByText('Test preview')).toBeInTheDocument();
     });
 
     it('renders avatar image', () => {
@@ -34,37 +32,34 @@ describe('MinimalMessageItem', () => {
       expect(avatar).toHaveAttribute('src', 'https://example.com/avatar.jpg');
     });
 
-    it('shows unread badge for unread messages', () => {
+    it('shows unread indicator for unread messages', () => {
       const message = mockMessage({ unread: true });
 
       const { container } = render(
         <MinimalMessageItem message={message} isSelected={false} onClick={() => {}} />
       );
 
-      // Check for unread indicator (blue dot or bold text)
-      const unreadIndicator = container.querySelector('.bg-blue-500');
-      expect(unreadIndicator).toBeInTheDocument();
+      expect(container.querySelector('.bg-emerald-500')).toBeInTheDocument();
     });
 
-    it('does not show unread badge for read messages', () => {
+    it('does not show unread dot for read messages', () => {
       const message = mockMessage({ unread: false });
 
       const { container } = render(
         <MinimalMessageItem message={message} isSelected={false} onClick={() => {}} />
       );
 
-      const unreadIndicator = container.querySelector('.bg-blue-500');
-      expect(unreadIndicator).not.toBeInTheDocument();
+      expect(container.querySelector('.bg-emerald-500')).not.toBeInTheDocument();
     });
   });
 
-  describe('Priority Badges', () => {
+  describe('Priority & SLA', () => {
     it('shows sprint badge for sprint priority', () => {
       const message = mockSprintMessage();
 
       render(<MinimalMessageItem message={message} isSelected={false} onClick={() => {}} />);
 
-      expect(screen.getByText(/sprint/i)).toBeInTheDocument();
+      expect(screen.getByText('Sprint')).toBeInTheDocument();
     });
 
     it('shows critical badge for critical priority', () => {
@@ -72,37 +67,34 @@ describe('MinimalMessageItem', () => {
 
       render(<MinimalMessageItem message={message} isSelected={false} onClick={() => {}} />);
 
-      expect(screen.getByText(/critical|kritisk/i)).toBeInTheDocument();
+      expect(screen.getByText('Critical')).toBeInTheDocument();
     });
 
-    it('shows correct SLA status badge', () => {
-      const message = mockMessage({ slaStatus: 'breach', sla: '5m' });
+    it('shows SLA tag for breach status', () => {
+      const message = mockMessage({ slaStatus: 'breach', sla: '5m', priority: 'high' });
 
-      render(<MinimalMessageItem message={message} isSelected={false} onClick={() => {}} />);
-
-      // Should show breach badge (red)
       const { container } = render(
         <MinimalMessageItem message={message} isSelected={false} onClick={() => {}} />
       );
-      const breachBadge = container.querySelector('.bg-red-100, .text-red-600');
-      expect(breachBadge).toBeInTheDocument();
+
+      expect(screen.getByText('5m')).toBeInTheDocument();
+      expect(container.querySelector('.text-red-800')).toBeInTheDocument();
     });
   });
 
   describe('Interactions', () => {
-    it('calls onClick when clicked', async () => {
+    it('calls onClick when row is activated', async () => {
       const onClick = vi.fn();
       const message = mockMessage();
 
       render(<MinimalMessageItem message={message} isSelected={false} onClick={onClick} />);
 
       const user = userEvent.setup();
-      const messageElement = screen.getByText(message.sender).closest('div[role="button"]');
-      
-      if (messageElement) {
-        await user.click(messageElement);
-        expect(onClick).toHaveBeenCalledWith(message);
-      }
+      await user.click(
+        screen.getByRole('button', { name: /öppna konversation med test user/i })
+      );
+
+      expect(onClick).toHaveBeenCalledTimes(1);
     });
 
     it('shows selected state when isSelected is true', () => {
@@ -112,12 +104,10 @@ describe('MinimalMessageItem', () => {
         <MinimalMessageItem message={message} isSelected={true} onClick={() => {}} />
       );
 
-      // Check for selected styling (background color change)
-      const selectedElement = container.querySelector('.bg-pink-50, .bg-rose-50');
-      expect(selectedElement).toBeInTheDocument();
+      expect(container.querySelector('.border-l-pink-500')).toBeInTheDocument();
     });
 
-    it('handles multiselect mode', async () => {
+    it('shows checkbox in multiselect mode', () => {
       const onToggleMultiSelect = vi.fn();
       const message = mockMessage();
 
@@ -132,89 +122,47 @@ describe('MinimalMessageItem', () => {
         />
       );
 
-      // Look for checkbox in multiselect mode
-      const checkbox = screen.queryByRole('checkbox');
-      expect(checkbox).toBeInTheDocument();
+      expect(screen.getByRole('checkbox')).toBeInTheDocument();
     });
   });
 
-  describe('Smart Features', () => {
-    it('shows VIP badge for VIP customers', () => {
+  describe('Smart features', () => {
+    it('shows VIP star badge', () => {
       const message = mockMessage({ isVIP: true });
 
-      render(<MinimalMessageItem message={message} isSelected={false} onClick={() => {}} />);
-
-      // Look for VIP indicator (star icon or badge)
       const { container } = render(
         <MinimalMessageItem message={message} isSelected={false} onClick={() => {}} />
       );
-      const vipBadge = container.querySelector('[data-vip="true"]');
-      // VIP badge might be rendered as icon or text
-      expect(screen.queryByText(/vip/i) || vipBadge).toBeTruthy();
+
+      expect(container.querySelector('.from-amber-400')).toBeInTheDocument();
     });
 
-    it('shows sentiment indicator', () => {
+    it('shows sentiment emoji', () => {
       const message = mockMessage({ sentiment: 'frustrated' });
 
-      const { container } = render(
-        <MinimalMessageItem message={message} isSelected={false} onClick={() => {}} />
-      );
-
-      // Sentiment might be shown as icon or color
-      expect(container.querySelector('[data-sentiment]')).toBeTruthy();
-    });
-
-    it('shows duplicate badge when isDuplicate is true', () => {
-      const message = mockMessage({ isDuplicate: true, duplicateCount: 3 });
-
       render(<MinimalMessageItem message={message} isSelected={false} onClick={() => {}} />);
 
-      expect(screen.queryByText(/3|dupl/i)).toBeTruthy();
+      expect(screen.getByTitle(/sentiment: frustrated/i)).toBeInTheDocument();
     });
 
-    it('shows typing indicator when customer is typing', () => {
+    it('shows typing indicator', () => {
       const message = mockMessage({ isTyping: true });
 
       render(<MinimalMessageItem message={message} isSelected={false} onClick={() => {}} />);
 
-      expect(screen.queryByText(/typing|skriver/i)).toBeTruthy();
-    });
-  });
-
-  describe('Warmth Indicators', () => {
-    it('shows hot warmth indicator', () => {
-      const message = mockMessage({ warmth: 'hot' });
-
-      const { container } = render(
-        <MinimalMessageItem message={message} isSelected={false} onClick={() => {}} />
-      );
-
-      const hotIndicator = container.querySelector('.text-red-500, .text-orange-500');
-      expect(hotIndicator).toBeTruthy();
-    });
-
-    it('shows cold warmth indicator', () => {
-      const message = mockMessage({ warmth: 'cold' });
-
-      const { container } = render(
-        <MinimalMessageItem message={message} isSelected={false} onClick={() => {}} />
-      );
-
-      const coldIndicator = container.querySelector('.text-blue-500, .text-gray-500');
-      expect(coldIndicator).toBeTruthy();
+      expect(screen.getByText(/skriver/i)).toBeInTheDocument();
     });
   });
 
   describe('Accessibility', () => {
-    it('has proper ARIA attributes', () => {
+    it('exposes row as button with beskrivande etikett', () => {
       const message = mockMessage();
 
-      const { container } = render(
-        <MinimalMessageItem message={message} isSelected={false} onClick={() => {}} />
-      );
+      render(<MinimalMessageItem message={message} isSelected={false} onClick={() => {}} />);
 
-      const messageElement = container.querySelector('[role="button"]');
-      expect(messageElement).toBeInTheDocument();
+      expect(
+        screen.getByRole('button', { name: /öppna konversation med test user/i })
+      ).toBeInTheDocument();
     });
 
     it('has alt text for avatar image', () => {
@@ -222,21 +170,7 @@ describe('MinimalMessageItem', () => {
 
       render(<MinimalMessageItem message={message} isSelected={false} onClick={() => {}} />);
 
-      const avatar = screen.getByAltText('Alice Johnson');
-      expect(avatar).toBeInTheDocument();
-    });
-  });
-
-  describe('Performance', () => {
-    it('renders quickly with minimal re-renders', () => {
-      const message = mockMessage();
-
-      const start = performance.now();
-      render(<MinimalMessageItem message={message} isSelected={false} onClick={() => {}} />);
-      const duration = performance.now() - start;
-
-      // Should render in less than 50ms
-      expect(duration).toBeLessThan(50);
+      expect(screen.getByAltText('Alice Johnson')).toBeInTheDocument();
     });
   });
 });

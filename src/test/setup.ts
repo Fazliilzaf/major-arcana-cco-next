@@ -7,19 +7,25 @@ afterEach(() => {
   cleanup();
 });
 
-// Mock window.matchMedia
+// Mock window.matchMedia — låt desktop-breakpoints (t.ex. lg: 1024px) matcha så layout
+// med "hidden lg:flex" faktiskt syns i integrationstester.
 Object.defineProperty(window, 'matchMedia', {
   writable: true,
-  value: vi.fn().mockImplementation((query) => ({
-    matches: false,
-    media: query,
-    onchange: null,
-    addListener: vi.fn(),
-    removeListener: vi.fn(),
-    addEventListener: vi.fn(),
-    removeEventListener: vi.fn(),
-    dispatchEvent: vi.fn(),
-  })),
+  value: vi.fn().mockImplementation((query: string) => {
+    const isDesktop =
+      /min-width:\s*1024px/.test(query) ||
+      /min-width:\s*1280px/.test(query);
+    return {
+      matches: isDesktop,
+      media: query,
+      onchange: null,
+      addListener: vi.fn(),
+      removeListener: vi.fn(),
+      addEventListener: vi.fn(),
+      removeEventListener: vi.fn(),
+      dispatchEvent: vi.fn(),
+    };
+  }),
 });
 
 // Mock IntersectionObserver
