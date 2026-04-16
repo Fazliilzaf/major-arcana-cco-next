@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Users, Search, Filter, Download, Upload, Settings, TrendingUp, Mail, Phone, Star, CheckSquare, Square } from "lucide-react";
 import { CustomerIdentityManager } from "./customer-identity-manager";
 import { ContactMergeModal } from "./contact-merge-modal";
@@ -8,6 +8,15 @@ import { mockUnifiedCustomers, mockMergeSuggestions } from "../data/mock-custome
 import { toast } from "sonner";
 import { Button } from "./ui/button";
 import type { MergeOptions } from "./contact-merge-modal";
+import {
+  ExportCustomersModal,
+  ImportCustomersModal,
+  CustomerIdentitySettingsModal,
+  DEFAULT_SETTINGS,
+  type CustomerIdentitySettings,
+} from "./customer-identity-modals";
+
+const SETTINGS_STORAGE_KEY = "hairtp.customerIdentity.settings.v1";
 
 export function CustomerIdentityPage() {
   const [customers, setCustomers] = useState<UnifiedCustomer[]>(mockUnifiedCustomers);
@@ -18,6 +27,50 @@ export function CustomerIdentityPage() {
   const [selectedCustomerB, setSelectedCustomerB] = useState<UnifiedCustomer | null>(null);
   const [showBulkMerge, setShowBulkMerge] = useState(false);
   const [selectedCustomers, setSelectedCustomers] = useState<Set<string>>(new Set());
+  const [showExport, setShowExport] = useState(false);
+  const [showImport, setShowImport] = useState(false);
+  const [showSettings, setShowSettings] = useState(false);
+  const [settings, setSettings] = useState<CustomerIdentitySettings>(DEFAULT_SETTINGS);
+
+  // Ladda sparade inställningar från localStorage
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    try {
+      const raw = window.localStorage.getItem(SETTINGS_STORAGE_KEY);
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        setSettings({ ...DEFAULT_SETTINGS, ...parsed });
+      }
+    } catch {
+      // Ignorera fel vid läsning
+    }
+  }, []);
+
+  const handleSaveSettings = (next: CustomerIdentitySettings) => {
+    setSettings(next);
+    try {
+      window.localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(next));
+    } catch {
+      // Ignorera fel vid sparning
+    }
+
+    // Tillämpa VIP-tröskeln direkt på befintliga kunder
+    setCustomers((prev) =>
+      prev.map((c) => ({
+        ...c,
+        isVIP: c.isVIP || (c.lifetimeValue ?? 0) >= next.defaultVIPThreshold,
+      })),
+    );
+  };
+
+  const handleImportCustomers = (newCustomers: UnifiedCustomer[]) => {
+    setCustomers((prev) => [...newCustomers, ...prev]);
+  };
+
+  const handleResetData = () => {
+    setCustomers(mockUnifiedCustomers);
+    setSelectedCustomers(new Set());
+  };
 
   // Filter customers
   const filteredCustomers = customers.filter((customer) => {
@@ -183,7 +236,7 @@ export function CustomerIdentityPage() {
 
             <div className="flex items-center gap-1">
               <Button
-                onClick={() => toast.info("📥 Export-funktion kommer snart...")}
+                onClick={() => setShowExport(true)}
                 variant="outline"
                 className="flex items-center gap-1 text-[9px] h-6 px-2"
               >
@@ -191,7 +244,7 @@ export function CustomerIdentityPage() {
                 Exportera
               </Button>
               <Button
-                onClick={() => toast.info("📤 Import-funktion kommer snart...")}
+                onClick={() => setShowImport(true)}
                 variant="outline"
                 className="flex items-center gap-1 text-[9px] h-6 px-2"
               >
@@ -199,7 +252,7 @@ export function CustomerIdentityPage() {
                 Importera
               </Button>
               <Button
-                onClick={() => toast.info("⚙️ Inställningar kommer snart...")}
+                onClick={() => setShowSettings(true)}
                 variant="outline"
                 className="flex items-center gap-1 text-[9px] h-6 px-2"
               >
@@ -439,6 +492,30 @@ export function CustomerIdentityPage() {
           selectedCustomerIds={Array.from(selectedCustomers)}
           customers={customers.filter(c => selectedCustomers.has(c.id))}
           onConfirmBulkMerge={handleBulkMerge}
+        />
+      )}
+
+      {showExport && (
+        <ExportCustomersModal
+          customers={customers}
+          onClose={() => setShowExport(false)}
+        />
+      )}
+
+      {showImport && (
+        <ImportCustomersModal
+          existingCustomers={customers}
+          onClose={() => setShowImport(false)}
+          onImport={handleImportCustomers}
+        />
+      )}
+
+      {showSettings && (
+        <CustomerIdentitySettingsModal
+          initialSettings={settings}
+          onClose={() => setShowSettings(false)}
+          onSave={handleSaveSettings}
+          onResetData={handleResetData}
         />
       )}
     </div>
