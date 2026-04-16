@@ -3,12 +3,42 @@ import path from 'path'
 import tailwindcss from '@tailwindcss/vite'
 import react from '@vitejs/plugin-react'
 
+/**
+ * Vite-plugin som hanterar `figma:asset/...` imports från Figma Make.
+ * Eftersom de ursprungliga binära asseten inte finns i repot resolvar vi
+ * alla sådana imports till en 1x1 transparent PNG (data-URL).
+ * Det gör att appen kan köra utan att krascha — riktiga logotyper kan
+ * läggas i /public och importeras som vanligt när de finns tillgängliga.
+ */
+const TRANSPARENT_PNG_DATA_URL =
+  'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII='
+
+function figmaAssetShim() {
+  const VIRTUAL_PREFIX = '\0figma-asset:'
+  return {
+    name: 'figma-asset-shim',
+    resolveId(source: string) {
+      if (source.startsWith('figma:asset/')) {
+        return VIRTUAL_PREFIX + source
+      }
+      return null
+    },
+    load(id: string) {
+      if (id.startsWith(VIRTUAL_PREFIX)) {
+        return `export default ${JSON.stringify(TRANSPARENT_PNG_DATA_URL)};`
+      }
+      return null
+    },
+  }
+}
+
 export default defineConfig({
   plugins: [
     // The React and Tailwind plugins are both required for Make, even if
     // Tailwind is not being actively used – do not remove them
     react(),
     tailwindcss(),
+    figmaAssetShim(),
   ],
   resolve: {
     alias: {
