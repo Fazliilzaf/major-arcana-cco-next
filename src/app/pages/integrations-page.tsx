@@ -1,6 +1,7 @@
 import { Calendar, CreditCard, Phone, BarChart3, MessageCircle, Zap, Check, Plus, Settings } from 'lucide-react';
 import { useState } from 'react';
 import { toast } from 'sonner';
+import { IntegrationConfigModal } from '../components/integration-config-modal';
 
 interface Integration {
   id: string;
@@ -239,24 +240,13 @@ function IntegrationCard({
         </div>
       </div>
 
-      {/* Config Modal - Simplified */}
+      {/* Config Modal */}
       {showConfig && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50 backdrop-blur-sm">
-          <div className="bg-white dark:bg-gray-900 rounded-xl shadow-2xl p-4 w-full max-w-md">
-            <h3 className="text-[12px] font-bold text-gray-900 dark:text-gray-100 mb-2">
-              Konfigurera {integration.name}
-            </h3>
-            <p className="text-[10px] text-gray-600 dark:text-gray-400 mb-3">
-              Konfigurationsalternativ kommer snart!
-            </p>
-            <button
-              onClick={() => setShowConfig(false)}
-              className="w-full px-3 py-1.5 bg-pink-600 text-white rounded-md font-semibold hover:bg-pink-700 text-[10px]"
-            >
-              Stäng
-            </button>
-          </div>
-        </div>
+        <IntegrationConfigModal
+          integration={integration}
+          onClose={() => setShowConfig(false)}
+          onDisconnect={onToggle}
+        />
       )}
     </div>
   );

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Globe, Instagram } from "lucide-react";
-import signatureLogo from "figma:asset/74e827600f608f517f2916a96a413e7032a66eb4.png";
+import signatureLogo from "@/assets/74e827600f608f517f2916a96a413e7032a66eb4.png";
 
 interface EmailSignatureProps {
   animated?: boolean;
