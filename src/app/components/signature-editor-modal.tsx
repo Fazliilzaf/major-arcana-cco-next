@@ -3,7 +3,11 @@ import { Button } from "./ui/button";
 import { useState, useRef } from "react";
 import { toast } from "sonner";
 import { AnimatedSignatureLogo } from "./animated-signature-logo";
-import signatureLogo from "figma:asset/74e827600f608f517f2916a96a413e7032a66eb4.png";
+
+// Placeholder tills en riktig logotyp-fil läggs i /public.
+// Ersatt från en trasig `figma:asset/...` import som blockade hela appen från att starta.
+const signatureLogo =
+  "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAQAAAC1HAwCAAAAC0lEQVR42mNkYAAAAAYAAjCB0C8AAAAASUVORK5CYII=";
 
 // Instagram and Facebook icons
 function Instagram({ className }: { className?: string }) {
