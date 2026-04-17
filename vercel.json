@@ -3,7 +3,7 @@
   "buildCommand": "npm run build",
   "outputDirectory": "dist",
   "framework": "vite",
-  "installCommand": "npm install",
+  "installCommand": "npm ci",
   "devCommand": "npm run dev",
   
   "headers": [
@@ -69,23 +69,10 @@
   
   "regions": ["arn1"],
   
-  "functions": {
-    "api/**/*.ts": {
-      "memory": 1024,
-      "maxDuration": 10
-    }
-  },
-  
   "crons": [],
   
   "env": {
     "VITE_APP_ENV": "production"
-  },
-  
-  "build": {
-    "env": {
-      "NODE_ENV": "production"
-    }
   },
   
   "ignoreCommand": "git diff --quiet HEAD^ HEAD ./"
